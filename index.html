@@ -3,67 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Creator Suite ULTIMATE v7</title>
+    <title>MINEVERSE - Creator Suite GREEN EDITION</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         body { background-color: #050505; color: #fff; font-family: 'Roboto', sans-serif; overflow-x: hidden; }
         .font-pro { font-family: 'Space Grotesk', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
-        .sidebar-btn { transition: 0.2s; border-radius: 12px; color: #888; }
-        .sidebar-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .sidebar-btn.active { background: #f00; color: #fff; box-shadow: 0 0 20px rgba(255,0,0,0.3); }
-        .page { display: none; animation: fadeIn 0.4s ease-out; }
+        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
+        
+        /* Sidebar Styling */
+        .sidebar-btn { transition: 0.3s; border-radius: 12px; color: #888; text-align: left; padding: 1rem; font-weight: bold; display: flex; align-items: center; gap: 0.75rem; width: 100%; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
+        .sidebar-btn:hover { background: rgba(0, 255, 0, 0.1); color: #fff; }
+        .sidebar-btn.active { background: #00ff00; color: #000; box-shadow: 0 0 25px rgba(0,255,0,0.4); }
+        
+        /* Animations */
+        .page { display: none; animation: fadeIn 0.5s ease-out; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .yt-card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2rem; max-height: 2.4rem; font-weight: 500; }
-        .sort-btn.active { background: #fff; color: #000; }
-        .velocity-badge { background: linear-gradient(90deg, #ff0000, #ff8800); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 900; }
-        .tag-badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 8px; font-size: 13px; transition: 0.3s; }
-        .tag-badge:hover { background: #ff0000; border-color: #ff0000; cursor: pointer; }
+        
+        /* Utilitaires */
+        .yt-card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 500; }
+        .green-glow { box-shadow: 0 0 15px rgba(0, 255, 0, 0.2); }
+        .tag-badge { background: rgba(0,255,0,0.05); border: 1px solid rgba(0,255,0,0.1); padding: 5px 12px; border-radius: 8px; font-size: 13px; }
+
+        /* Style Comment Forge Capture */
+        #comment-capture { 
+            padding: 24px; 
+            border-radius: 24px; 
+            overflow: hidden;
+            width: fit-content;
+            min-width: 480px;
+            max-width: 600px;
+            background-color: #0f0f0f;
+        }
+        .yt-light { background-color: #ffffff !important; color: #0f0f0f !important; }
+        .yt-light #commPreviewPseudo { color: #0f0f0f !important; }
+        .yt-light #commPreviewText { color: #0f0f0f !important; }
+        .yt-light #commPreviewTime { color: #606060 !important; }
+        .yt-light svg { fill: #0f0f0f !important; }
+        
+        /* Custom Inputs */
+        input, textarea { border: 1px solid rgba(255,255,255,0.1) !important; transition: 0.3s; color: white !important; }
+        input:focus, textarea:focus { border-color: #00ff00 !important; background: rgba(0, 255, 0, 0.05) !important; }
     </style>
 </head>
 <body class="flex flex-col lg:flex-row min-h-screen">
 
-    <!-- NAVIGATION -->
-    <nav class="w-full lg:w-72 glass m-2 p-6 flex flex-col gap-4 z-50">
-        <div class="text-3xl font-black italic tracking-tighter text-center uppercase font-pro mb-4">
-            YT<span class="text-red-600">CORE</span>
+    <!-- NAVIGATION LATERALE -->
+    <nav class="w-full lg:w-72 glass m-2 p-6 flex flex-col gap-4 z-50 border-r border-green-600/10">
+        <div class="text-3xl font-black italic tracking-tighter text-center uppercase font-pro mb-6 text-white">
+            MINE<span class="text-green-500">VERSE</span>
         </div>
+        
         <div class="flex flex-col gap-2">
-            <button onclick="switchPage('channel')" id="btn-channel" class="sidebar-btn active p-4 text-left font-bold flex items-center gap-3">📺 Analyseur Chaîne</button>
-            <button onclick="switchPage('analyzer')" id="btn-analyzer" class="sidebar-btn p-4 text-left font-bold flex items-center gap-3">📊 Performance Vidéo</button>
-            <button onclick="switchPage('tester')" id="btn-tester" class="sidebar-btn p-4 text-left font-bold flex items-center gap-3">🖼️ Mockup Miniature</button>
-            <button onclick="switchPage('seo')" id="btn-seo" class="sidebar-btn p-4 text-left font-bold flex items-center gap-3">🔍 Spy Tags</button>
-            <button onclick="switchPage('title')" id="btn-title" class="sidebar-btn p-4 text-left font-bold flex items-center gap-3">✍️ Score Titre</button>
+            <button onclick="switchPage('comment')" id="btn-comment" class="sidebar-btn active">💬 Comment Forge</button>
+            <button onclick="switchPage('channel')" id="btn-channel" class="sidebar-btn">📺 Analyseur Chaîne</button>
+            <button onclick="switchPage('analyzer')" id="btn-analyzer" class="sidebar-btn">📊 Performance Vidéo</button>
+            <button onclick="switchPage('tester')" id="btn-tester" class="sidebar-btn">🖼️ Mockup Miniature</button>
+            <button onclick="switchPage('seo')" id="btn-seo" class="sidebar-btn">🔍 Spy SEO</button>
+            <button onclick="switchPage('title')" id="btn-title" class="sidebar-btn">✍️ Score Titre</button>
         </div>
-        <div class="mt-auto pt-4 border-t border-white/5 text-[10px] text-gray-600 uppercase tracking-widest text-center">Creator Pro Suite v7.0</div>
+
+        <div class="mt-auto pt-6 border-t border-white/5">
+            <div class="bg-green-600/10 p-4 rounded-xl text-center">
+                <p class="text-[10px] uppercase font-bold text-green-500 mb-1 tracking-widest">Mineverse Pro</p>
+                <p class="text-[9px] text-gray-500 uppercase">Version 11.0 Green Edition</p>
+            </div>
+        </div>
     </nav>
 
     <main class="flex-1 p-4 lg:p-10">
 
-        <!-- PAGE : ANALYSEUR CHAINE -->
-        <section id="page-channel" class="page active space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Data <span class="text-red-600">Channel</span></h1>
-            <div class="glass p-3 flex gap-3">
-                <input type="text" id="channelInput" placeholder="Lien @pseudo, lien vidéo ou direct..." class="flex-1 bg-transparent px-6 py-4 outline-none">
-                <button onclick="analyzeChannel()" class="bg-red-600 px-8 py-4 rounded-xl font-bold uppercase italic transition">Scanner</button>
-            </div>
-
-            <div id="channel-info" class="hidden space-y-6">
-                <div class="glass p-8 flex flex-col md:flex-row items-center gap-8">
-                    <img id="chan-pdp" src="" class="w-28 h-28 rounded-full border-4 border-red-600 shadow-xl shadow-red-600/20">
-                    <div class="flex-1 text-center md:text-left">
-                        <h2 id="chan-name" class="text-4xl font-black font-pro uppercase mb-2">-</h2>
-                        <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                            <div class="bg-white/5 px-4 py-2 rounded-lg"><p class="text-[10px] text-gray-500 uppercase font-bold">Abonnés</p><p id="chan-subs" class="text-xl font-black font-pro">-</p></div>
-                            <div class="bg-white/5 px-4 py-2 rounded-lg border border-red-600/30"><p class="text-[10px] text-red-500 uppercase font-bold">Moyenne Vues</p><p id="chan-avg-views" class="text-xl font-black font-pro text-red-600">-</p></div>
-                            <div class="bg-white/5 px-4 py-2 rounded-lg"><p class="text-[10px] text-gray-500 uppercase font-bold">Total Vidéos</p><p id="chan-vids" class="text-xl font-black font-pro">-</p></div>
+        <!-- PAGE : COMMENT FORGE -->
+        <section id="page-comment" class="page active space-y-8">
+            <h1 class="text-4xl font-black font-pro italic uppercase">Comment <span class="text-green-500">Forge</span></h1>
+            
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                <div class="glass p-8 space-y-6 border-l-4 border-green-500">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xs font-bold uppercase text-gray-400 tracking-widest">Éditeur de réaction</h3>
+                        <div class="flex bg-white/5 p-1 rounded-lg border border-white/10">
+                            <button onclick="setCommentTheme('dark')" class="px-4 py-1.5 text-[10px] uppercase font-bold rounded-md bg-green-500 text-black transition" id="theme-dark-btn">Dark</button>
+                            <button onclick="setCommentTheme('light')" class="px-4 py-1.5 text-[10px] uppercase font-bold rounded-md transition" id="theme-light-btn">Light</button>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-2 w-full md:w-auto">
-                        <button id="sort-recent" onclick="loadChannelVideos('date')" class="sort-btn active glass px-6 py-3 rounded-xl text-xs font-bold uppercase">Dernières Sorties</button>
-                        <button id="sort-popular" onclick="loadChannelVideos('viewCount')" class="sort-btn glass px-6 py-3 rounded-xl text-xs font-bold uppercase">Les Plus Vues</button>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-1">
+                            <label class="text-[10px] uppercase font-bold text-gray-500 block mb-1">Pseudo</label>
+                            <input type="text" id="commPseudo" oninput="updateComment()" placeholder="@MrBeast" class="w-full bg-white/5 p-3 rounded-lg outline-none">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="text-[10px] uppercase font-bold text-gray-500 block mb-1">Date relative</label>
+                            <input type="text" id="commTime" oninput="updateComment()" placeholder="il y a 45 min" class="w-full bg-white/5 p-3 rounded-lg outline-none">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[10px] uppercase font-bold text-gray-500 block mb-1">Commentaire</label>
+                            <textarea id="commText" oninput="updateComment()" class="w-full bg-white/5 p-3 rounded-lg outline-none h-24" placeholder="Contenu du commentaire..."></textarea>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="text-[10px] uppercase font-bold text-gray-500 block mb-1">Likes</label>
+                            <input type="text" id="commLikes" oninput="updateComment()" placeholder="2.5k" class="w-full bg-white/5 p-3 rounded-lg outline-none">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="text-[10px] uppercase font-bold text-gray-500 block mb-1">Avatar</label>
+                            <input type="file" id="commAvatarInput" class="text-[10px] text-gray-500 w-full mt-2">
+                        </div>
+                    </div>
+                    <button onclick="downloadComment()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic hover:bg-green-400 transition shadow-lg shadow-green-500/20">Exporter l'image (PNG)</button>
+                </div>
+
+                <div class="flex flex-col items-center justify-center space-y-6">
+                    <h3 class="text-[10px] uppercase font-bold text-gray-500 tracking-widest">Rendu Temps Réel</h3>
+                    <div id="comment-capture">
+                        <div class="flex items-start gap-4 text-white">
+                            <img id="commPreviewAvatar" src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full object-cover flex-shrink-0">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <span id="commPreviewPseudo" class="text-[13px] font-bold text-white">@pseudo</span>
+                                    <span id="commPreviewTime" class="text-[12px] text-gray-400">il y a 2 heures</span>
+                                </div>
+                                <p id="commPreviewText" class="text-[14px] leading-snug whitespace-pre-wrap text-white mb-3">Tapez votre commentaire...</p>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <svg viewBox="0 0 24 24" class="w-5 h-5 fill-white"><path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.13,0.24-1.53,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.74,2.18-1.78l1.39-6.89C21.39,11.3,20.21,11,18.77,11z M7,20H4v-8h3V20z M19.98,12.11l-1.39,6.89 C18.52,19.35,18.06,19,17.43,19H8v-7.61l5.12-5.26C13.29,5.96,13.58,5.85,13.88,5.85c0.3,0,0.58,0.11,0.78,0.3 c0.15,0.14,0.23,0.34,0.23,0.55L13.37,12h5.4c0.55,0,0.73,0.07,0.92,0.11c0.04,0.01,0.08,0.02,0.12,0.03 C19.95,12.06,19.98,12.09,19.98,12.11z"></path></svg>
+                                        <span id="commPreviewLikes" class="text-[12px] text-gray-400 font-medium">0</span>
+                                    </div>
+                                    <svg viewBox="0 0 24 24" class="w-5 h-5 fill-white"><path d="M17,4h-1H6.57C5.5,4,4.59,4.74,4.38,5.78l-1.39,6.89C2.61,13.7,3.79,14,5.23,14h4.23l-1.52,4.94 C7.62,19.97,8.46,21,9.62,21c0.58,0,1.13-0.24,1.53-0.65L17,14h4V4H17z M10.12,19.87c-0.17,0.17-0.45,0.28-0.74,0.28 c-0.3,0-0.58-0.11-0.78-0.3c-0.15-0.14-0.23-0.34-0.23-0.55L9.63,13H4.23c-0.55,0-0.73-0.07-0.92-0.11c-0.04-0.01-0.08-0.02-0.12-0.03 c-0.14-0.04-0.17-0.07-0.17-0.09l1.39-6.89C4.48,5.65,4.94,6,5.57,6H16v7.61L10.88,18.87z M20,13h-3V5h3V13z"></path></svg>
+                                    <span class="text-[12px] font-bold ml-2">Répondre</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE : ANALYSEUR CHAINE -->
+        <section id="page-channel" class="page space-y-8">
+            <h1 class="text-4xl font-black font-pro italic uppercase">Scanner <span class="text-green-500">Chaîne</span></h1>
+            <div class="glass p-3 flex gap-3">
+                <input type="text" id="channelInput" placeholder="URL ou @Pseudo..." class="flex-1 bg-transparent px-6 py-4 outline-none">
+                <button onclick="analyzeChannel()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase italic transition">Analyser</button>
+            </div>
+            <div id="channel-info" class="hidden space-y-6">
+                <div class="glass p-8 flex flex-col md:flex-row items-center gap-8 border-l-4 border-green-500">
+                    <img id="chan-pdp" src="" class="w-24 h-24 rounded-full border-2 border-green-500 shadow-lg shadow-green-500/10">
+                    <div class="flex-1 text-center md:text-left text-white">
+                        <h2 id="chan-name" class="text-3xl font-black mb-2">-</h2>
+                        <div class="flex gap-4 justify-center md:justify-start">
+                            <div class="bg-green-500/10 px-4 py-2 rounded-lg text-green-500 font-bold text-sm">Moyenne: <span id="chan-avg-views">-</span></div>
+                            <div class="bg-white/5 px-4 py-2 rounded-lg text-sm text-gray-300">Subs: <span id="chan-subs">-</span></div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="sort-recent" onclick="loadChannelVideos('date')" class="bg-white/5 border border-white/10 px-4 py-2 rounded-lg text-[10px] font-bold uppercase hover:bg-green-500 hover:text-black transition">Récentes</button>
+                        <button id="sort-popular" onclick="loadChannelVideos('viewCount')" class="bg-white/5 border border-white/10 px-4 py-2 rounded-lg text-[10px] font-bold uppercase hover:bg-green-500 hover:text-black transition">Tops</button>
                     </div>
                 </div>
                 <div id="chan-best-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"></div>
@@ -72,46 +168,43 @@
 
         <!-- PAGE : PERFORMANCE VIDEO -->
         <section id="page-analyzer" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Précision <span class="text-red-600">Sortie</span></h1>
+            <h1 class="text-4xl font-black font-pro italic uppercase">Analyse <span class="text-green-500">Performance</span></h1>
             <div class="glass p-3 flex gap-3">
-                <input type="text" id="videoUrl" placeholder="Lien de la vidéo..." class="flex-1 bg-transparent px-6 py-4 outline-none">
-                <button onclick="runAnalysis()" class="bg-red-600 hover:bg-red-700 px-8 py-4 rounded-xl font-bold uppercase italic">Analyser</button>
+                <input type="text" id="videoUrl" placeholder="Lien de la vidéo..." class="flex-1 bg-transparent px-6 py-4 outline-none text-white">
+                <button onclick="runAnalysis()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase italic">Analyser</button>
             </div>
             <div id="dash-ana" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass p-6 text-center space-y-4">
+                <div class="glass p-6 text-center space-y-4 border-t-4 border-green-500">
                     <img id="ana-thumb" class="rounded-xl w-full" src="">
-                    <h2 id="ana-title" class="font-bold leading-tight">-</h2>
-                    <div id="ana-verdict" class="py-3 border-2 rounded-full font-black uppercase text-sm italic tracking-widest">-</div>
+                    <h2 id="ana-title" class="font-bold leading-tight text-white">-</h2>
+                    <div id="ana-verdict" class="py-3 border-2 rounded-full font-black uppercase text-[10px] italic tracking-widest">-</div>
                 </div>
                 <div class="glass p-6 flex flex-col justify-center text-center">
-                    <span class="text-red-600 font-bold uppercase text-xs mb-4">Publication</span>
-                    <p id="ana-jour" class="text-2xl font-black capitalize font-pro">-</p>
-                    <p id="ana-annee" class="text-xl font-bold opacity-40 font-pro mb-4">-</p>
-                    <p id="ana-heure" class="text-6xl font-black italic font-pro text-red-600">-</p>
+                    <p id="ana-jour" class="text-2xl font-black capitalize font-pro text-green-500">-</p>
+                    <p id="ana-annee" class="text-xl font-bold opacity-40 text-gray-300">-</p>
+                    <p id="ana-heure" class="text-6xl font-black italic font-pro text-white">-</p>
                 </div>
-                <div class="glass p-6 flex flex-col justify-around text-center">
-                    <div><p class="text-gray-500 font-bold text-xs uppercase mb-2">Vues Vidéo</p><p id="ana-views" class="text-4xl font-black font-pro">-</p></div>
-                    <div><p class="text-gray-500 font-bold text-xs uppercase mb-2">Moyenne Chaîne</p><p id="ana-avg" class="text-2xl font-bold opacity-40">-</p></div>
+                <div class="glass p-6 flex flex-col justify-around text-center text-white">
+                    <div><p class="text-gray-500 font-bold text-[10px] uppercase">Vues Actuelles</p><p id="ana-views" class="text-3xl font-black">-</p></div>
+                    <div><p class="text-gray-500 font-bold text-[10px] uppercase">Moyenne Chaîne</p><p id="ana-avg" class="text-xl font-bold opacity-30">-</p></div>
                 </div>
             </div>
         </section>
 
-        <!-- PAGE : TESTEUR MINIATURE -->
+        <!-- PAGE : MOCKUP -->
         <section id="page-tester" class="page space-y-8">
-            <div class="flex justify-between items-end">
-                <h1 class="text-4xl font-black font-pro italic uppercase">Thumbnail <span class="text-red-600">Sim</span></h1>
-                <button onclick="refreshMockup()" class="bg-blue-600 px-6 py-2 rounded-full font-bold uppercase text-xs">Actualiser Accueil</button>
-            </div>
+            <h1 class="text-4xl font-black font-pro italic uppercase">Miniature <span class="text-green-500">Simulateur</span></h1>
             <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
-                <div class="xl:col-span-1 glass p-6 space-y-4">
-                    <input type="file" id="thumbInput" class="text-xs text-gray-500 w-full">
-                    <textarea id="testTitle" class="w-full bg-black/40 p-3 rounded-lg text-sm border border-white/10 outline-none h-24">Titre de la vidéo...</textarea>
-                    <input type="text" id="testChannel" value="Ma Chaîne" class="w-full bg-black/40 p-3 rounded-lg text-sm border border-white/10">
+                <div class="xl:col-span-1 glass p-6 space-y-4 border-r-4 border-green-500">
+                    <input type="file" id="thumbInput" class="text-[10px] text-gray-500 w-full">
+                    <textarea id="testTitle" oninput="refreshMockup()" class="w-full bg-white/5 p-3 rounded-lg text-sm outline-none h-24" placeholder="Titre de la vidéo"></textarea>
+                    <input type="text" id="testChannel" oninput="refreshMockup()" value="Ma Chaîne" class="w-full bg-white/5 p-3 rounded-lg text-sm outline-none">
+                    <button onclick="refreshMockup()" class="w-full bg-green-500 text-black py-3 rounded-lg font-black text-[10px] uppercase">Actualiser Flux</button>
                 </div>
                 <div class="xl:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="yt-feed">
                     <div class="flex flex-col gap-3">
-                        <img id="mock-img" src="https://via.placeholder.com/640x360/111/fff?text=Upload+Image" class="rounded-xl aspect-video object-cover border-2 border-red-600">
-                        <div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-red-600"></div><div><h3 id="mock-title" class="yt-card-title text-sm font-bold text-white">-</h3><p id="mock-channel" class="text-xs text-gray-400 mt-1">Channel</p></div></div>
+                        <img id="mock-img" src="https://via.placeholder.com/640x360/111/fff?text=Miniature" class="rounded-xl aspect-video object-cover border-2 border-green-500 shadow-lg shadow-green-500/20">
+                        <div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-green-500"></div><div><h3 id="mock-title" class="yt-card-title text-sm font-bold text-white">-</h3><p id="mock-channel" class="text-xs text-gray-400">Channel</p></div></div>
                     </div>
                 </div>
             </div>
@@ -119,34 +212,34 @@
 
         <!-- PAGE : SEO -->
         <section id="page-seo" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Spy <span class="text-red-600">SEO</span></h1>
+            <h1 class="text-4xl font-black font-pro italic uppercase">Spy <span class="text-green-500">SEO</span></h1>
             <div class="glass p-3 flex gap-3">
                 <input type="text" id="seoUrl" placeholder="Lien de la vidéo concurrente..." class="flex-1 bg-transparent px-6 py-4 outline-none">
-                <button onclick="extractSEO()" class="bg-white text-black px-8 py-4 rounded-xl font-bold uppercase italic hover:bg-red-600 hover:text-white transition">Extraire Tags</button>
+                <button onclick="extractSEO()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase italic">Tags</button>
             </div>
-            <div id="seo-results" class="hidden glass p-8">
-                <div id="tags-container" class="flex flex-wrap gap-2"></div>
-                <button onclick="copyTags()" class="mt-8 text-[10px] uppercase font-bold border border-white/20 px-4 py-2 rounded-lg hover:bg-white hover:text-black transition">Copier tout le SEO</button>
+            <div id="seo-results" class="hidden glass p-8 border-b-4 border-green-500">
+                <div id="tags-container" class="flex flex-wrap gap-2 text-white"></div>
+                <button onclick="copyTags()" class="mt-8 text-[10px] uppercase font-bold border border-white/10 px-6 py-3 rounded-lg hover:bg-green-500 hover:text-black transition">Copier les tags</button>
             </div>
         </section>
 
-        <!-- PAGE : SCORE TITRE -->
+        <!-- PAGE : TITLE -->
         <section id="page-title" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Score <span class="text-red-600">Titre</span></h1>
+            <h1 class="text-4xl font-black font-pro italic uppercase">Titre <span class="text-green-500">Optimizer</span></h1>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="glass p-8 space-y-6">
-                    <input type="text" id="titleInput" oninput="analyzeTitle()" placeholder="Saisissez votre titre..." class="w-full bg-black/40 border border-white/10 p-4 rounded-xl text-xl outline-none focus:border-red-600">
+                <div class="glass p-8 space-y-6 border-l-4 border-green-500">
+                    <input type="text" id="titleInput" oninput="analyzeTitle()" placeholder="Tapez votre titre..." class="w-full bg-white/5 p-4 rounded-xl text-xl outline-none">
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-white/5 p-4 rounded-xl text-center"><p class="text-xs text-gray-500 uppercase">Mots</p><p id="wordCountUI" class="text-xl font-bold">0</p></div>
-                        <div id="scoreBox" class="bg-red-600 p-4 rounded-xl text-center"><p class="text-xs text-white/70 uppercase">Score</p><p id="titleScore" class="text-xl font-bold">0%</p></div>
+                        <div class="bg-white/5 p-4 rounded-xl text-center"><p class="text-[10px] text-gray-500 uppercase">Nombre Mots</p><p id="wordCountUI" class="text-xl font-bold text-white">0</p></div>
+                        <div id="scoreBox" class="bg-green-500 p-4 rounded-xl text-center shadow-lg shadow-green-500/20"><p class="text-[10px] text-black uppercase font-bold">Score Algorithme</p><p id="titleScore" class="text-xl font-bold text-black">0%</p></div>
                     </div>
                 </div>
                 <div class="glass p-8">
-                    <ul class="space-y-4 text-sm" id="checklist">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase mb-4 tracking-widest">Checklist Viralité</h3>
+                    <ul class="space-y-4 text-sm text-gray-300" id="checklist">
                         <li id="check-words">⚪ Visez 5 à 10 mots</li>
-                        <li id="check-caps">⚪ Équilibre MAJ / min</li>
-                        <li id="check-impact">⚪ Présence de mots d'impact</li>
-                        <li id="check-len">⚪ Lisibilité globale</li>
+                        <li id="check-caps">⚪ Évitez le full MAJUSCULES</li>
+                        <li id="check-impact">⚪ Mots d'impact (Secret, Enfin...)</li>
                     </ul>
                 </div>
             </div>
@@ -166,79 +259,105 @@
             document.getElementById('btn-'+id).classList.add('active');
         }
 
-        // --- PERFORMANCE CHAINE ---
+        // --- MINEVERSE COMMENT FORGE ---
+        function setCommentTheme(theme) {
+            const capture = document.getElementById('comment-capture');
+            const darkBtn = document.getElementById('theme-dark-btn');
+            const lightBtn = document.getElementById('theme-light-btn');
+            
+            if(theme === 'light') {
+                capture.classList.add('yt-light');
+                lightBtn.classList.add('bg-green-500', 'text-black');
+                darkBtn.classList.remove('bg-green-500', 'text-black');
+            } else {
+                capture.classList.remove('yt-light');
+                darkBtn.classList.add('bg-green-500', 'text-black');
+                lightBtn.classList.remove('bg-green-500', 'text-black');
+            }
+        }
+
+        function updateComment() {
+            document.getElementById('commPreviewPseudo').innerText = document.getElementById('commPseudo').value || "@pseudo";
+            document.getElementById('commPreviewText').innerText = document.getElementById('commText').value || "Votre commentaire ici...";
+            document.getElementById('commPreviewTime').innerText = document.getElementById('commTime').value || "il y a 2 heures";
+            document.getElementById('commPreviewLikes').innerText = document.getElementById('commLikes').value || "0";
+        }
+
+        document.getElementById('commAvatarInput').onchange = e => {
+            const r = new FileReader(); r.onload = x => document.getElementById('commPreviewAvatar').src = x.target.result;
+            r.readAsDataURL(e.target.files[0]);
+        };
+
+        function downloadComment() {
+            const element = document.getElementById('comment-capture');
+            html2canvas(element, { 
+                backgroundColor: null, 
+                scale: 3, 
+                logging: false,
+                useCORS: true 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `mineverse-comment-${Date.now()}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            });
+        }
+
+        // --- API & LOGIC ---
         async function analyzeChannel() {
             const input = document.getElementById('channelInput').value.trim();
             if(!input) return;
-            let channelId = "";
             try {
-                if (input.includes("v=") || input.includes("youtu.be/") || input.includes("shorts/")) {
-                    const vid = input.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/)[1];
+                let channelId = "";
+                if (input.includes("v=")) {
+                    const vid = input.match(/v=([a-zA-Z0-9_-]{11})/)[1];
                     const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vid}&key=${KEY}`);
                     const data = await res.json();
                     channelId = data.items[0].snippet.channelId;
                 } else if (input.includes("@")) {
-                    const handle = input.split("@").pop().split("/")[0].split("?")[0];
+                    const handle = input.split("@").pop().split("/")[0];
                     const res = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&forHandle=${handle}&key=${KEY}`);
                     const data = await res.json();
                     channelId = data.items[0].id;
                 } else if (input.includes("/channel/")) {
-                    channelId = input.split("/channel/")[1].split("/")[0].split("?")[0];
+                    channelId = input.split("/channel/")[1].split("/")[0];
                 }
-                if(!channelId) throw new Error();
                 currentChannelId = channelId;
                 const cRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${KEY}`);
                 const cData = await cRes.json();
                 const chan = cData.items[0];
-                channelAvgViews = Math.round(parseInt(chan.statistics.viewCount) / parseInt(chan.statistics.videoCount));
+                channelAvgViews = Math.round(chan.statistics.viewCount / chan.statistics.videoCount);
                 document.getElementById('channel-info').classList.remove('hidden');
                 document.getElementById('chan-pdp').src = chan.snippet.thumbnails.medium.url;
                 document.getElementById('chan-name').innerText = chan.snippet.title;
                 document.getElementById('chan-subs').innerText = parseInt(chan.statistics.subscriberCount).toLocaleString();
-                document.getElementById('chan-vids').innerText = parseInt(chan.statistics.videoCount).toLocaleString();
                 document.getElementById('chan-avg-views').innerText = channelAvgViews.toLocaleString();
                 loadChannelVideos('date');
-            } catch(e) { alert("Chaîne non trouvée. Utilisez le lien d'une vidéo !"); }
+            } catch(e) { alert("Chaîne non trouvée."); }
         }
 
         async function loadChannelVideos(sortType) {
-            if(!currentChannelId) return;
-            document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(sortType === 'date' ? 'sort-recent' : 'sort-popular').classList.add('active');
             const grid = document.getElementById('chan-best-grid');
-            grid.innerHTML = "<p class='col-span-full text-center py-10 opacity-50'>Chargement...</p>";
-            const vRes = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${currentChannelId}&maxResults=48&order=${sortType}&type=video&key=${KEY}`);
+            grid.innerHTML = "<p class='col-span-full text-center py-10 opacity-30'>MINEVERSE Scan...</p>";
+            const vRes = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${currentChannelId}&maxResults=24&order=${sortType}&type=video&key=${KEY}`);
             const vData = await vRes.json();
             const ids = vData.items.map(v => v.id.videoId).join(',');
-            const statsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${ids}&key=${KEY}`);
-            const statsData = await statsRes.json();
+            const sRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${ids}&key=${KEY}`);
+            const sData = await sRes.json();
             grid.innerHTML = "";
-            statsData.items.forEach(v => {
+            sData.items.forEach(v => {
                 const views = parseInt(v.statistics.viewCount);
-                const pubDate = new Date(v.snippet.publishedAt);
-                const diffHours = Math.max(1, Math.floor((new Date() - pubDate) / (1000 * 60 * 60)));
-                const velocity = diffHours < 168 ? Math.round(views / diffHours) : 0;
                 const power = (views / channelAvgViews).toFixed(1);
                 const div = document.createElement('div');
-                div.className = "glass p-4 flex flex-col gap-3";
-                div.innerHTML = `
-                    <div class="relative">
-                        <img src="${v.snippet.thumbnails.high.url}" class="rounded-lg w-full aspect-video object-cover">
-                        ${velocity > 100 ? `<div class="absolute top-2 left-2 velocity-badge">🔥 ${velocity} v/h</div>` : ''}
-                    </div>
-                    <h3 class="yt-card-title text-sm font-bold h-10">${v.snippet.title}</h3>
-                    <div class="mt-auto pt-3 border-t border-white/5 flex justify-between items-end">
-                        <div><p class="text-[10px] text-gray-500 uppercase font-bold">Vues</p><p class="text-lg font-black font-pro">${views.toLocaleString()}</p></div>
-                        <div class="text-right"><p class="text-[10px] text-gray-500 uppercase font-bold">Puissance</p><p class="text-sm font-black ${power > 1.5 ? 'text-green-400' : 'text-white'}">x${power}</p></div>
-                    </div>`;
+                div.className = "glass p-4 space-y-3 hover:border-green-500 transition";
+                div.innerHTML = `<img src="${v.snippet.thumbnails.high.url}" class="rounded-lg w-full aspect-video object-cover"><h3 class="yt-card-title text-xs font-bold h-10">${v.snippet.title}</h3><div class="flex justify-between items-end border-t border-white/5 pt-3"><div><p class="text-[8px] text-gray-500 uppercase font-bold">Vues</p><p class="text-md font-black text-white">${views.toLocaleString()}</p></div><p class="text-[10px] font-black ${power > 1.5 ? 'text-green-500' : 'text-gray-500'}">x${power}</p></div>`;
                 grid.appendChild(div);
             });
         }
 
-        // --- PERFORMANCE VIDEO ---
         async function runAnalysis() {
             const url = document.getElementById('videoUrl').value;
-            const id = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/)?.[1];
+            const id = url.match(/(?:v=|shorts\/)([a-zA-Z0-9_-]{11})/)?.[1];
             if(!id) return;
             const vRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${id}&key=${KEY}`);
             const vData = await vRes.json();
@@ -248,7 +367,7 @@
             const chan = cData.items[0].statistics;
             document.getElementById('dash-ana').classList.remove('hidden');
             const views = parseInt(video.statistics.viewCount);
-            const avg = Math.round(parseInt(chan.viewCount) / parseInt(chan.videoCount));
+            const avg = Math.round(chan.viewCount / chan.videoCount);
             const ratio = views / avg;
             document.getElementById('ana-thumb').src = video.snippet.thumbnails.high.url;
             document.getElementById('ana-title').innerText = video.snippet.title;
@@ -259,36 +378,34 @@
             document.getElementById('ana-views').innerText = views.toLocaleString();
             document.getElementById('ana-avg').innerText = avg.toLocaleString();
             const vBox = document.getElementById('ana-verdict');
-            if (ratio > 1.4) { vBox.innerText = "🚀 BANGER"; vBox.style.color = "#00ff88"; vBox.style.borderColor = "#00ff88"; }
-            else if (ratio > 0.6) { vBox.innerText = "⚖️ MOYEN"; vBox.style.color = "#ffaa00"; vBox.style.borderColor = "#ffaa00"; }
-            else { vBox.innerText = "📉 NUL"; vBox.style.color = "#ff4444"; vBox.style.borderColor = "#ff4444"; }
+            if (ratio > 1.4) { vBox.innerText = "🚀 BANGER"; vBox.style.color = "#00ff00"; vBox.style.borderColor = "#00ff00"; }
+            else if (ratio > 0.6) { vBox.innerText = "⚖️ MOYEN"; vBox.style.color = "#ffffff"; vBox.style.borderColor = "#ffffff"; }
+            else { vBox.innerText = "📉 NUL"; vBox.style.color = "#444444"; vBox.style.borderColor = "#444444"; }
         }
 
-        // --- MOCKUP ---
         async function refreshMockup() {
             document.getElementById('mock-title').innerText = document.getElementById('testTitle').value;
             document.getElementById('mock-channel').innerText = document.getElementById('testChannel').value;
-            const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=FR&maxResults=10&key=${KEY}`);
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=FR&maxResults=12&key=${KEY}`);
             const data = await res.json();
             const feed = document.getElementById('yt-feed');
             const myCard = feed.firstElementChild;
             feed.innerHTML = ''; feed.appendChild(myCard);
             data.items.forEach(v => {
                 const div = document.createElement('div');
-                div.className = "flex flex-col gap-3"; 
-                div.innerHTML = `<img src="${v.snippet.thumbnails.high.url}" class="rounded-xl aspect-video object-cover"><div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-white/10 flex-shrink-0"></div><div><h3 class="yt-card-title text-sm font-bold text-white">${v.snippet.title}</h3><p class="text-xs text-gray-400 mt-1">${v.snippet.channelTitle}</p></div></div>`;
+                div.className = "flex flex-col gap-3";
+                div.innerHTML = `<img src="${v.snippet.thumbnails.high.url}" class="rounded-xl aspect-video object-cover"><div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-green-500/20"></div><div><h3 class="yt-card-title text-sm font-bold text-white">${v.snippet.title}</h3><p class="text-xs text-gray-500">${v.snippet.channelTitle}</p></div></div>`;
                 feed.appendChild(div);
             });
         }
+
         document.getElementById('thumbInput').onchange = e => {
             const r = new FileReader(); r.onload = x => document.getElementById('mock-img').src = x.target.result;
             r.readAsDataURL(e.target.files[0]);
         };
 
-        // --- SEO SPY ---
         async function extractSEO() {
-            const url = document.getElementById('seoUrl').value;
-            const id = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/)?.[1];
+            const id = document.getElementById('seoUrl').value.match(/(?:v=|shorts\/)([a-zA-Z0-9_-]{11})/)?.[1];
             if(!id) return;
             const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${KEY}`);
             const data = await res.json();
@@ -296,42 +413,37 @@
             const container = document.getElementById('tags-container');
             container.innerHTML = '';
             document.getElementById('seo-results').classList.remove('hidden');
-            if(!tags) { container.innerHTML = '<p class="text-red-500 uppercase font-bold text-xs">Aucun tag trouvé.</p>'; return; }
+            if(!tags) { container.innerHTML = '<p class="text-green-500 uppercase font-black text-xs">Aucun tag.</p>'; return; }
             tags.forEach(t => {
-                const span = document.createElement('span'); span.className = "tag-badge"; span.innerText = t;
+                const span = document.createElement('span'); span.className = "tag-badge text-white"; span.innerText = t;
                 container.appendChild(span);
             });
         }
+
         function copyTags() {
             const tags = Array.from(document.querySelectorAll('.tag-badge')).map(s => s.innerText).join(', ');
             navigator.clipboard.writeText(tags);
-            alert("SEO copié !");
+            alert("Tags Mineverse copiés !");
         }
 
-        // --- SCORE TITRE ---
         function analyzeTitle() {
             const t = document.getElementById('titleInput').value.trim();
             const words = t.split(/\s+/).filter(w => w.length > 0);
-            const wordCount = words.length;
+            const count = words.length;
             let score = 0;
             const isFullCaps = t.length > 5 && t === t.toUpperCase();
-            if (t.length === 0) score = 0;
-            else if (isFullCaps) score = 10;
-            else {
-                if (wordCount >= 5 && wordCount <= 10) score += 80;
-                else if (wordCount > 0 && wordCount < 5) score += (wordCount * 15);
+            if (t.length > 0 && !isFullCaps) {
+                if (count >= 5 && count <= 10) score += 80;
+                else if (count > 0 && count < 5) score += (count * 15);
                 else score += 40;
-                const impacts = ['enfin', 'secret', 'fou', 'incroyable', 'erreur', 'choc', 'argent', 'vrai'];
+                const impacts = ['enfin', 'secret', 'fou', 'incroyable', 'erreur', 'vrai'];
                 if (impacts.some(w => t.toLowerCase().includes(w))) score += 20;
-            }
+            } else if (isFullCaps) { score = 10; }
             if(score > 100) score = 100;
-            document.getElementById('wordCountUI').innerText = wordCount;
+            document.getElementById('wordCountUI').innerText = count;
             document.getElementById('titleScore').innerText = score + "%";
-            document.getElementById('scoreBox').style.backgroundColor = isFullCaps ? '#333' : (score > 79 ? '#00ff88' : (score > 40 ? '#ffaa00' : '#ff0000'));
-            document.getElementById('check-words').innerHTML = (wordCount >= 5 && wordCount <= 10) ? "✅ Cible mots (5-10) atteinte" : "⚪ Visez 5 à 10 mots";
-            document.getElementById('check-caps').innerHTML = isFullCaps ? "❌ Pénalité FULL MAJ" : "✅ Casse mixte respectée";
-            document.getElementById('check-impact').innerHTML = score >= 80 ? "✅ Potentiel de clic élevé" : "⚪ Ajoutez un mot d'impact";
-            document.getElementById('check-len').innerHTML = (t.length >= 30 && t.length <= 80) ? "✅ Lisibilité correcte" : "⚪ Longueur à ajuster";
+            document.getElementById('scoreBox').style.backgroundColor = isFullCaps ? '#333' : (score > 79 ? '#00ff00' : '#008800');
+            document.getElementById('check-words').innerHTML = (count >= 5 && count <= 10) ? "✅ Cible mots atteinte" : "⚪ Visez 5-10 mots";
         }
     </script>
 </body>
