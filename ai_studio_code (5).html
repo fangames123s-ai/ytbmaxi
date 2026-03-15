@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Pro Analyzer</title>
+    <!-- On charge Tailwind pour le style et Chart.js pour le graphique -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background: #050505; color: white; font-family: sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px; }
+        .banger { color: #00ff88; border-color: #00ff88; }
+        .moyen { color: #ffcc00; border-color: #ffcc00; }
+        .nul { color: #ff4444; border-color: #ff4444; }
+    </style>
+</head>
+<body class="p-6">
+
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-4xl font-black text-center mb-10 uppercase tracking-tighter">YouTube <span class="text-red-600">Stats Pro</span></h1>
+
+        <!-- Barre de recherche -->
+        <div class="glass p-4 mb-10 flex flex-col md:flex-row gap-4">
+            <input type="text" id="videoUrl" placeholder="Lien de la vidéo..." 
+                   class="flex-1 bg-black border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600">
+            <button onclick="analyser()" class="bg-red-600 px-8 py-3 rounded-lg font-bold uppercase hover:bg-red-700 transition">Analyser</button>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- DATE ET HEURE -->
+                <div class="glass p-6">
+                    <p class="text-gray-500 text-xs font-bold uppercase mb-4">Publication</p>
+                    <p id="res-jour" class="text-3xl font-bold text-red-600 capitalize">-</p>
+                    <p id="res-date" class="text-lg">-</p>
+                    <p id="res-heure" class="text-5xl font-black mt-2">-</p>
+                </div>
+
+                <!-- VERDICT ET VUES -->
+                <div class="glass p-6 text-center flex flex-col items-center justify-center">
+                    <p class="text-gray-500 text-xs font-bold uppercase mb-2">Verdict</p>
+                    <p id="res-verdict" class="text-3xl font-black border-2 px-4 py-2 rounded-full mb-4">-</p>
+                    <p class="text-gray-500 text-xs font-bold uppercase mb-1">Vues de la vidéo</p>
+                    <p id="res-views" class="text-4xl font-black">-</p>
+                </div>
+
+                <!-- MOYENNE CHAINE -->
+                <div class="glass p-6 flex flex-col items-center justify-center text-center">
+                    <p class="text-gray-500 text-xs font-bold uppercase mb-2">Moyenne de la chaîne</p>
+                    <p id="res-avg" class="text-3xl font-bold opacity-60">-</p>
+                    <p class="text-xs text-gray-600 mt-2 italic">(Vues totales / Nombre de vidéos)</p>
+                </div>
+            </div>
+
+            <!-- GRAPHIQUE -->
+            <div class="glass p-6">
+                <h3 class="text-gray-500 text-xs font-bold uppercase mb-6 text-center">Comparatif de performance (Graphique)</h3>
+                <div style="position: relative; height:300px; width:100%">
+                    <canvas id="viewChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let myChart = null;
+
+        async function analyser() {
+            const url = document.getElementById('videoUrl').value;
+            const videoId = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1];
+
+            if (!videoId) return alert("Lien invalide");
+
+            try {
+                // 1. APPEL API VIDEO (AVEC TA CLÉ)
+                const vRes = await fetch("https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=" + videoId + "&key=AIzaSyAJ6-ByQWIqnMqcTYrgYZ_2U7Ug-JzCa9w");
+                const vData = await vRes.json();
+                const video = vData.items[0];
+
+                // 2. APPEL API CHAINE (AVEC TA CLÉ)
+                const channelId = video.snippet.channelId;
+                const cRes = await fetch("https://www.googleapis.com/youtube/v3/channels?part=statistics&id=" + channelId + "&key=AIzaSyAJ6-ByQWIqnMqcTYrgYZ_2U7Ug-JzCa9w");
+                const cData = await cRes.json();
+                const channel = cData.items[0].statistics;
+
+                // AFFICHAGE
+                document.getElementById('dashboard').classList.remove('hidden');
+
+                // Date
+                const d = new Date(video.snippet.publishedAt);
+                document.getElementById('res-jour').innerText = d.toLocaleDateString('fr-FR', { weekday: 'long' });
+                document.getElementById('res-date').innerText = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                document.getElementById('res-heure').innerText = d.toLocaleTimeString('fr-FR');
+
+                // Vues
+                const views = parseInt(video.statistics.viewCount);
+                const avg = Math.round(parseInt(channel.viewCount) / parseInt(channel.videoCount));
+                document.getElementById('res-views').innerText = views.toLocaleString('fr-FR');
+                document.getElementById('res-avg').innerText = avg.toLocaleString('fr-FR');
+
+                // Verdict
+                const verdict = document.getElementById('res-verdict');
+                const ratio = views / avg;
+                let color = "#ffcc00";
+
+                if (ratio > 1.4) {
+                    verdict.innerText = "🚀 BANGER";
+                    verdict.className = "text-3xl font-black border-2 px-4 py-2 rounded-full mb-4 banger";
+                    color = "#00ff88";
+                } else if (ratio < 0.6) {
+                    verdict.innerText = "💀 ÉCLATÉ NUL";
+                    verdict.className = "text-3xl font-black border-2 px-4 py-2 rounded-full mb-4 nul";
+                    color = "#ff4444";
+                } else {
+                    verdict.innerText = "⚖️ MOYEN";
+                    verdict.className = "text-3xl font-black border-2 px-4 py-2 rounded-full mb-4 moyen";
+                    color = "#ffcc00";
+                }
+
+                // Graphique
+                const ctx = document.getElementById('viewChart').getContext('2d');
+                if (myChart) myChart.destroy();
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Cette Vidéo', 'Moyenne Chaîne'],
+                        datasets: [{
+                            data: [views, avg],
+                            backgroundColor: [color, '#333'],
+                            borderRadius: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#222' } },
+                            x: { grid: { display: false }, ticks: { color: 'white', font: { weight: 'bold' } } }
+                        }
+                    }
+                });
+
+            } catch (err) {
+                console.error(err);
+                alert("Erreur lors de l'analyse. Vérifie la clé ou le lien.");
+            }
+        }
+    </script>
+</body>
+</html>
