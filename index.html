@@ -13,171 +13,120 @@
         .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
         
         /* Sidebar Styling */
-        .sidebar-btn { transition: 0.3s; border-radius: 12px; color: #888; text-align: left; padding: 1rem; font-weight: bold; display: flex; align-items: center; gap: 0.75rem; width: 100%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+        .sidebar-btn { transition: 0.3s; border-radius: 12px; color: #888; text-align: left; padding: 1rem; font-weight: bold; display: flex; align-items: center; gap: 0.75rem; width: 100%; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; border: 1px solid transparent; }
         .sidebar-btn:hover { background: rgba(0, 255, 0, 0.1); color: #fff; }
-        .sidebar-btn.active { background: #00ff00; color: #000; box-shadow: 0 0 25px rgba(0,255,0,0.4); }
+        .sidebar-btn.active { background: #00ff00 !important; color: #000 !important; box-shadow: 0 0 25px rgba(0,255,0,0.4); border-color: #00ff00; }
         
-        /* Animations */
-        .page { display: none; animation: fadeIn 0.5s ease-out; }
+        .page { display: none; animation: fadeIn 0.4s ease-out; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .yt-card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 500; line-height: 1.2rem; max-height: 2.4rem; }
+        .admin-only { display: none !important; }
+        body.is-admin .admin-only { display: block !important; }
 
-        /* Comment Forge Compact */
-        #comment-capture { padding: 24px; border-radius: 24px; width: fit-content; min-width: 400px; max-width: 550px; background-color: #0f0f0f; transition: background 0.3s; }
-        .yt-light { background-color: #ffffff !important; color: #0f0f0f !important; }
-        .yt-light #commPreviewPseudo, .yt-light #commPreviewText, .yt-light .reply-btn { color: #0f0f0f !important; }
-        .yt-light #commPreviewTime, .yt-light .likes-val { color: #606060 !important; }
-        .yt-light svg { fill: #0f0f0f !important; }
+        /* Comment Mockup - COMPACT & FIT CONTENT */
+        #comment-capture { 
+            padding: 20px; 
+            border-radius: 15px; 
+            width: fit-content; 
+            max-width: 480px; 
+            background-color: #0f0f0f; 
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 15px; background: #000; }
+        .video-wrapper video, .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
-        /* Overlays & Mockup */
-        .img-container { position: relative; overflow: hidden; border-radius: inherit; }
-        .dl-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; cursor: pointer; color: #fff; font-size: 10px; font-weight: bold; }
-        .img-container:hover .dl-overlay { opacity: 1; }
-        #yt-feed-container.mobile-mode { max-width: 375px; margin: 0 auto; border: 8px solid #222; border-radius: 30px; height: 650px; overflow-y: auto; background: #000; padding: 10px; }
-        #yt-feed-container.mobile-mode .grid { grid-template-columns: 1fr !important; }
-
-        input, textarea { border: 1px solid rgba(255,255,255,0.1) !important; background: rgba(255,255,255,0.05) !important; color: white !important; transition: 0.3s; }
-        input:focus { border-color: #00ff00 !important; outline: none; }
-        .tag-badge { background: rgba(0,255,0,0.1); border: 1px solid rgba(0,255,0,0.2); padding: 4px 10px; border-radius: 8px; font-size: 12px; color: #00ff00; }
-        .advice-box { border-left: 4px solid #00ff00; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 0 12px 12px 0; }
-
-        /* Admin Styles */
-        #admin-btn-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
-        .admin-only { display: none; }
-        body.is-admin .admin-only { display: block; }
+        input, textarea { border: 1px solid rgba(255,255,255,0.1) !important; background: rgba(255,255,255,0.05) !important; color: white !important; outline: none; transition: 0.2s; }
+        input:focus { border-color: #00ff00 !important; background: rgba(255,255,255,0.1) !important; }
+        .tag-badge { background: rgba(0,255,0,0.1); border: 1px solid rgba(0,255,0,0.2); padding: 4px 10px; border-radius: 8px; font-size: 11px; color: #00ff00; font-weight: bold; }
+        .yt-card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
 <body class="flex flex-col lg:flex-row min-h-screen">
 
-    <!-- BOUTON CONNEXION ADMIN -->
-    <div id="admin-btn-container">
-        <button id="btn-login-trigger" onclick="openLoginModal()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-2 rounded-full font-black text-[10px] uppercase italic transition shadow-lg shadow-green-500/20">Se connecter en tant qu'administrateur</button>
-        <button id="btn-logout" onclick="logout()" class="hidden bg-red-600 text-white px-5 py-2 rounded-full font-black text-[10px] uppercase italic transition">Déconnexion (Admin)</button>
+    <!-- ADMIN LOGIN (HAUT DROITE) -->
+    <div class="fixed top-5 right-5 z-[1000] flex gap-3">
+        <button id="login-trigger" onclick="openLogin()" class="bg-green-500 text-black px-6 py-2 rounded-full font-black text-[10px] uppercase italic transition shadow-lg shadow-green-500/20 hover:scale-105">Se connecter en tant qu'administrateur</button>
+        <button id="logout-trigger" onclick="logout()" class="hidden bg-red-600 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase italic transition shadow-lg">Déconnexion (Staff)</button>
     </div>
 
-    <!-- MODAL CONNEXION -->
+    <!-- MODAL AUTH -->
     <div id="login-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[2000] flex items-center justify-center p-4">
-        <div class="glass p-8 w-full max-w-sm border-green-500/30">
-            <h2 class="text-2xl font-black uppercase italic mb-6">Accès <span class="text-green-500">Privé</span></h2>
+        <div class="glass p-8 w-full max-w-sm border-green-500/30 text-center text-white">
+            <h2 class="text-2xl font-black uppercase italic mb-6">Staff <span class="text-green-500">Access</span></h2>
             <div class="space-y-4">
-                <input type="text" id="admin-user" placeholder="Pseudo" class="w-full p-3 rounded-xl">
-                <input type="password" id="admin-pass" placeholder="Mot de passe" class="w-full p-3 rounded-xl">
-                <button onclick="checkLogin()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic transition">Entrer</button>
-                <button onclick="closeLoginModal()" class="w-full text-gray-500 text-[10px] uppercase font-bold">Annuler</button>
+                <input type="text" id="in-user" placeholder="Pseudo" class="w-full p-4 rounded-xl">
+                <input type="password" id="in-pass" placeholder="Mot de passe" class="w-full p-4 rounded-xl">
+                <button onclick="checkAuth()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic transition">Entrer</button>
+                <button onclick="closeLogin()" class="w-full text-gray-500 text-[10px] uppercase font-bold mt-2">Annuler</button>
             </div>
         </div>
     </div>
 
-    <!-- NAVIGATION LATERALE -->
+    <!-- SIDEBAR -->
     <nav class="w-full lg:w-72 glass m-2 p-6 flex flex-col gap-4 z-50 border-r border-green-600/10 h-screen sticky top-0">
-        <div class="text-3xl font-black italic font-pro text-center uppercase mb-6">MINE<span class="text-green-500">VERSE</span></div>
-        
+        <div class="text-3xl font-black italic font-pro text-center uppercase mb-6 text-white">MINE<span class="text-green-500">VERSE</span></div>
         <div class="flex flex-col gap-1">
             <button onclick="switchPage('advice')" id="btn-advice" class="sidebar-btn active">🧠 Conseils Algo</button>
-            <button onclick="switchPage('conf')" id="btn-conf" class="sidebar-btn">🎬 Conférences</button>
-            <button onclick="switchPage('comment')" id="btn-comment" class="sidebar-btn">💬 Comment Forge</button>
-            <button onclick="switchPage('channel')" id="btn-channel" class="sidebar-btn">📺 Analyseur Chaîne</button>
+            <button onclick="switchPage('conf')" id="btn-conf" class="sidebar-btn">🎤 Conférences</button>
             <button onclick="switchPage('analyzer')" id="btn-analyzer" class="sidebar-btn">📊 Performance Vidéo</button>
             <button onclick="switchPage('tester')" id="btn-tester" class="sidebar-btn">🖼️ Mockup Miniature</button>
-            <button onclick="switchPage('seo')" id="btn-seo" class="sidebar-btn">🔍 Spy SEO (Tags)</button>
+            <button onclick="switchPage('comment')" id="btn-comment" class="sidebar-btn">💬 Comment Forge</button>
+            <button onclick="switchPage('channel')" id="btn-channel" class="sidebar-btn">📺 Analyseur Chaîne</button>
+            <button onclick="switchPage('seo')" id="btn-seo" class="sidebar-btn">🔍 Spy SEO</button>
             <button onclick="switchPage('title')" id="btn-title" class="sidebar-btn">✍️ Score Titre</button>
-        </div>
-
-        <div class="mt-auto pt-6 border-t border-white/5 text-center">
-            <p class="text-[10px] uppercase font-bold text-green-500 mb-1 tracking-widest">Mineverse Pro</p>
-            <p class="text-[9px] text-gray-500 uppercase italic">Saison 1 - By Fanfeur</p>
         </div>
     </nav>
 
     <main class="flex-1 p-4 lg:p-10">
 
-        <!-- PAGE CONFERENCES -->
-        <section id="page-conf" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Conférences <span class="text-green-500">MP4</span></h1>
-            
-            <!-- ADMIN ONLY : AJOUTER CONF -->
-            <div class="admin-only glass p-6 border-l-4 border-green-500 space-y-4 mb-8">
-                <h3 class="text-xs font-bold uppercase text-green-500 tracking-widest">Ajouter une nouvelle conférence</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="conf-title-input" placeholder="Titre de la conférence..." class="p-3 rounded-xl">
-                    <input type="text" id="conf-url-input" placeholder="Lien MP4 (URL)..." class="p-3 rounded-xl">
-                </div>
-                <button onclick="addConference()" class="bg-green-500 text-black px-6 py-3 rounded-xl font-black uppercase italic">Publier la conférence</button>
-            </div>
-
-            <!-- GRID DES CONFERENCES -->
-            <div id="conf-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Les conférences s'affichent ici -->
-            </div>
-        </section>
-
-        <!-- PAGE CONSEILS ALGO -->
+        <!-- CONSEILS ALGO (RE-AJOUT CTR) -->
         <section id="page-advice" class="page active space-y-8">
             <h1 class="text-4xl font-black font-pro italic uppercase">Conseils <span class="text-green-500">Algorithme</span></h1>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                <div class="glass p-8 space-y-6 border-l-4 border-green-500 h-fit">
-                    <h3 class="text-xs font-bold uppercase text-gray-400 tracking-widest">YouTube Studio Insights</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-[10px] uppercase font-bold text-gray-500 block mb-1">Durée Vidéo (MM:SS)</label>
-                            <input type="text" id="adv-duration" placeholder="ex: 12:30" class="w-full p-3 rounded-xl outline-none">
-                        </div>
-                        <div>
-                            <label class="text-[10px] uppercase font-bold text-gray-500 block mb-1">Moyenne de visionnage (MM:SS)</label>
-                            <input type="text" id="adv-avd" placeholder="ex: 04:20" class="w-full p-3 rounded-xl outline-none">
-                        </div>
-                        <div>
-                            <label class="text-[10px] uppercase font-bold text-gray-500 block mb-1">Taux de clic (CTR %)</label>
-                            <input type="number" step="0.1" id="adv-ctr" placeholder="ex: 5.4" class="w-full p-3 rounded-xl outline-none">
-                        </div>
-                        <button onclick="generateAdvice()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic transition">Analyser mes stats</button>
-                    </div>
+            <div class="glass p-8 max-w-xl space-y-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] uppercase font-bold text-gray-500 ml-1">Durée Vidéo</label>
+                    <input type="text" id="adv-dur" placeholder="ex: 10:00" class="w-full p-4 rounded-xl text-white">
                 </div>
-
-                <div id="advice-result" class="hidden glass p-8 space-y-6">
-                    <h2 class="text-2xl font-black uppercase italic text-white">Le Verdict <span class="text-green-500">Mineverse</span></h2>
-                    <div id="advice-content" class="space-y-4"></div>
+                <div class="space-y-1">
+                    <label class="text-[10px] uppercase font-bold text-gray-500 ml-1">Moyenne de visionnage (Watch Time)</label>
+                    <input type="text" id="adv-wt" placeholder="ex: 04:30" class="w-full p-4 rounded-xl text-white">
                 </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] uppercase font-bold text-gray-500 ml-1">Taux de clic (CTR %)</label>
+                    <input type="number" id="adv-ctr" placeholder="ex: 6.2" class="w-full p-4 rounded-xl text-white">
+                </div>
+                <button onclick="calcAdvice()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black italic uppercase transition">Analyser les Stats</button>
+                <div id="adv-res" class="hidden p-6 glass border-l-4 border-green-500 space-y-2 text-white"></div>
             </div>
         </section>
 
-        <!-- PAGE COMMENT FORGE -->
+        <!-- COMMENT FORGE (PDP + COMPACT) -->
         <section id="page-comment" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Comment <span class="text-green-500">Forge</span></h1>
+            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Comment Forge</h1>
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-10">
-                <div class="glass p-8 space-y-6 border-l-4 border-green-500 h-fit">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-xs font-bold uppercase text-gray-400 tracking-widest">Éditeur</h3>
-                        <div class="flex bg-white/5 p-1 rounded-lg border border-white/10">
-                            <button onclick="setCommentTheme('dark')" class="px-4 py-1.5 text-[10px] uppercase font-bold rounded-md bg-green-500 text-black transition" id="theme-dark-btn">Dark</button>
-                            <button onclick="setCommentTheme('light')" class="px-4 py-1.5 text-[10px] uppercase font-bold rounded-md transition" id="theme-light-btn">Light</button>
-                        </div>
+                <div class="glass p-6 space-y-4 text-white">
+                    <div>
+                        <label class="text-[10px] text-gray-500 uppercase font-bold">Photo de Profil :</label>
+                        <input type="file" id="c-pdp-in" accept="image/*" class="text-[10px] w-full mt-1">
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="text" id="commPseudo" oninput="updateComment()" placeholder="Pseudo" class="w-full p-3 rounded-lg outline-none">
-                        <input type="text" id="commTime" oninput="updateComment()" placeholder="il y a 2h" class="w-full p-3 rounded-lg outline-none">
-                        <textarea id="commText" oninput="updateComment()" class="col-span-2 w-full p-3 rounded-lg outline-none h-24" placeholder="Message..."></textarea>
-                        <input type="text" id="commLikes" oninput="updateComment()" placeholder="2.5k" class="w-full p-3 rounded-lg outline-none">
-                        <input type="file" id="commAvatarInput" class="text-[10px] text-gray-500">
-                    </div>
-                    <button onclick="downloadComment()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic transition">Exporter l'image</button>
+                    <input type="text" id="c-user" oninput="upC()" placeholder="Pseudo (ex: @Fanfeur)" class="w-full p-3 rounded-lg">
+                    <textarea id="c-txt" oninput="upC()" placeholder="Ton message..." class="w-full p-3 rounded-lg h-24"></textarea>
+                    <input type="text" id="c-likes" oninput="upC()" placeholder="Likes (ex: 1.2k)" class="w-full p-3 rounded-lg">
+                    <button onclick="exportC()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black italic uppercase transition">Exporter PNG Compact</button>
                 </div>
-                <div class="flex flex-col items-center justify-center">
+                <div class="flex justify-center items-center">
                     <div id="comment-capture">
-                        <div class="flex items-start gap-4">
-                            <img id="commPreviewAvatar" src="https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg" class="w-10 h-10 rounded-full object-cover bg-gray-800">
-                            <div class="flex-1 text-white">
-                                <div class="flex items-center gap-2 mb-0.5"><span id="commPreviewPseudo" class="text-[13px] font-bold">@pseudo</span><span id="commPreviewTime" class="text-[12px] text-gray-400">il y a 2 min</span></div>
-                                <p id="commPreviewText" class="text-[14px] leading-snug whitespace-pre-wrap text-white mb-3">Tapez ici...</p>
-                                <div class="flex items-center gap-4">
-                                    <div class="flex items-center gap-1.5 opacity-80">
-                                        <svg viewBox="0 0 24 24" class="w-5 h-5 fill-white"><path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.13,0.24-1.53,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.74,2.18-1.78l1.39-6.89C21.39,11.3,20.21,11,18.77,11z M7,20H4v-8h3V20z"></path></svg>
-                                        <span id="commPreviewLikes" class="text-[12px] text-gray-400 likes-val">0</span>
-                                    </div>
-                                    <svg viewBox="0 0 24 24" class="w-5 h-5 fill-white opacity-80"><path d="M17,4h-1H6.57C5.5,4,4.59,4.74,4.38,5.78l-1.39,6.89C2.61,13.7,3.79,14,5.23,14h4.23l-1.52,4.94 C7.62,19.97,8.46,21,9.62,21c0.58,0,1.13-0.24,1.53-0.65L17,14h4V4H17z"></path></svg>
-                                    <span class="text-[12px] font-bold reply-btn">Répondre</span>
+                        <div class="flex items-start gap-3">
+                            <img id="cp-pdp" src="https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg" class="w-10 h-10 rounded-full object-cover bg-zinc-800 flex-shrink-0">
+                            <div class="flex-1 text-white text-left">
+                                <div class="flex items-center gap-2 mb-1"><span id="cp-user" class="text-[13px] font-bold">@pseudo</span><span class="text-[12px] text-gray-400">il y a 2 min</span></div>
+                                <p id="cp-txt" class="text-[14px] leading-snug mb-3">Ton message apparaîtra ici...</p>
+                                <div class="flex items-center gap-4 opacity-80">
+                                    <div class="flex items-center gap-1.5"><svg viewBox="0 0 24 24" class="w-4 h-4 fill-white"><path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.13,0.24-1.53,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.74,2.18-1.78l1.39-6.89C21.39,11.3,20.21,11,18.77,11z M7,20H4v-8h3V20z"></path></svg><span id="cp-likes" class="text-[12px]">0</span></div>
+                                    <svg viewBox="0 0 24 24" class="w-4 h-4 fill-white"><path d="M17,4h-1H6.57C5.5,4,4.59,4.74,4.38,5.78l-1.39,6.89C2.61,13.7,3.79,14,5.23,14h4.23l-1.52,4.94 C7.62,19.97,8.46,21,9.62,21c0.58,0,1.13-0.24,1.53-0.65L17,14h4V4H17z"></path></svg>
+                                    <span class="text-[12px] font-bold">Répondre</span>
                                 </div>
                             </div>
                         </div>
@@ -186,326 +135,229 @@
             </div>
         </section>
 
-        <!-- SCANNER CHAINE -->
-        <section id="page-channel" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Scanner <span class="text-green-500">Chaîne</span></h1>
-            <div class="glass p-3 flex gap-3">
-                <input type="text" id="channelInput" placeholder="URL ou @Pseudo..." class="flex-1 bg-transparent px-6 py-4 outline-none">
-                <button onclick="analyzeChannel()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold transition uppercase italic">Analyser</button>
-            </div>
-            <div id="channel-info" class="hidden space-y-6">
-                <div class="glass p-8 flex items-center gap-8 border-l-4 border-green-500">
-                    <div class="img-container w-24 h-24 rounded-full border-2 border-green-500">
-                        <img id="chan-pdp" src="" class="w-full h-full object-cover">
-                        <div class="dl-overlay" onclick="forceDownload(document.getElementById('chan-pdp').src, 'pdp.jpg')">SAVE</div>
-                    </div>
-                    <div class="flex-1 text-white">
-                        <h2 id="chan-name" class="text-3xl font-black mb-2">-</h2>
-                        <div class="flex gap-4">
-                            <div class="bg-green-500/10 px-4 py-2 rounded-lg text-green-500 font-bold text-xs uppercase">Moy. Vues: <span id="chan-avg-views">-</span></div>
-                            <div class="bg-white/5 px-4 py-2 rounded-lg text-xs text-gray-400 uppercase">Subs: <span id="chan-subs">-</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="chan-best-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"></div>
-            </div>
-        </section>
-
         <!-- PERFORMANCE VIDEO -->
         <section id="page-analyzer" class="page space-y-8">
             <h1 class="text-4xl font-black font-pro italic uppercase">Analyse <span class="text-green-500">Performance</span></h1>
-            <div class="glass p-3 flex gap-3">
-                <input type="text" id="videoUrl" placeholder="URL de la vidéo..." class="flex-1 bg-transparent px-6 py-4 outline-none text-white">
-                <button onclick="runAnalysis()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold transition uppercase italic">Calculer</button>
+            <div class="glass p-3 flex gap-3 text-white">
+                <input type="text" id="videoUrl" placeholder="URL Vidéo YouTube..." class="flex-1 bg-transparent px-6 outline-none">
+                <button onclick="runAnalysis()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase italic">Analyser</button>
             </div>
-            <div id="dash-ana" class="hidden space-y-6 text-white text-center">
+            <div id="dash-ana" class="hidden space-y-6 text-center text-white">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="glass p-6 space-y-4 border-t-4 border-green-500 h-fit">
-                        <div class="img-container rounded-xl aspect-video">
-                            <img id="ana-thumb" class="w-full" src="">
-                            <div class="dl-overlay" onclick="forceDownload(document.getElementById('ana-thumb').src, 'mini.jpg')">DOWNLOAD</div>
-                        </div>
-                        <h2 id="ana-title" class="font-bold text-sm">-</h2>
-                        <div id="ana-verdict" class="py-3 border-2 rounded-full font-black text-xs italic">-</div>
+                    <div class="glass p-6 border-t-4 border-green-500">
+                        <img id="ana-thumb" class="w-full rounded-xl aspect-video object-cover" src="">
+                        <h2 id="ana-title" class="font-bold text-sm mt-4 h-10 overflow-hidden">-</h2>
+                        <div id="ana-verdict" class="py-2 mt-4 border-2 rounded-full font-black text-xs italic">-</div>
                     </div>
-                    <div class="glass p-6 flex flex-col justify-center">
-                        <p id="ana-jour" class="text-xl font-black text-green-500 uppercase">-</p>
+                    <div class="glass p-6 flex flex-col items-center justify-center">
+                        <p id="ana-date" class="text-xs font-bold text-green-500 uppercase">-</p>
                         <p id="ana-heure" class="text-6xl font-black font-pro">-</p>
                     </div>
                     <div class="glass p-6 grid grid-cols-2 gap-4">
-                        <div><p class="text-[8px] text-gray-500 font-bold uppercase">Vues</p><p id="ana-views" class="text-xl font-black">-</p></div>
-                        <div><p class="text-[8px] text-gray-500 font-bold uppercase">Moy. Vues</p><p id="ana-avg" class="text-xl font-bold opacity-30">-</p></div>
-                        <div><p class="text-[8px] text-gray-500 font-bold uppercase">Likes</p><p id="ana-likes" class="text-xl font-black">-</p></div>
-                        <div><p class="text-[8px] text-gray-500 font-bold uppercase">Moy. Likes</p><p id="ana-avg-likes" class="text-xl font-bold opacity-30">-</p></div>
+                        <div><p class="text-[9px] text-gray-500 uppercase font-bold">Vues</p><p id="ana-v" class="text-xl font-black">-</p></div>
+                        <div><p class="text-[9px] text-gray-500 uppercase font-bold">Moy. Vues</p><p id="ana-av" class="text-xl font-bold opacity-30">-</p></div>
+                        <div><p class="text-[9px] text-gray-500 uppercase font-bold">Likes</p><p id="ana-l" class="text-xl font-black">-</p></div>
+                        <div><p class="text-[9px] text-gray-500 uppercase font-bold">Moy. Likes</p><p id="ana-al" class="text-xl font-bold opacity-30">-</p></div>
                         <div class="col-span-2 pt-4 border-t border-white/5">
-                            <p class="text-[8px] text-gray-500 font-bold uppercase">Commentaires</p><p id="ana-comms" class="text-xl font-black">-</p>
-                            <p class="text-[10px] opacity-30 font-bold uppercase">Moyenne Chaîne: <span id="ana-avg-comms">-</span></p>
+                            <p class="text-[9px] text-gray-500 uppercase font-bold">Commentaires</p><p id="ana-c" class="text-xl font-black">-</p>
+                            <p class="text-[9px] text-gray-500">Moy. Chaîne: <span id="ana-ac">-</span></p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- MOCKUP MINIATURE -->
-        <section id="page-tester" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Mockup <span class="text-green-500">Miniature</span></h1>
-            <div class="flex gap-4">
-                <button onclick="toggleMobileMode()" class="bg-white/10 px-6 py-2 rounded-xl text-[10px] font-bold border border-white/20 hover:bg-green-500 transition uppercase italic">Switch Mobile/Desktop</button>
-                <button onclick="toggleFullscreen()" class="bg-white/10 px-6 py-2 rounded-xl text-[10px] font-bold border border-white/20 hover:bg-green-500 transition uppercase italic">Plein Écran</button>
+        <!-- SCANNER CHAINE -->
+        <section id="page-channel" class="page space-y-8">
+            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Scanner Chaîne</h1>
+            <div class="glass p-3 flex gap-3 text-white">
+                <input type="text" id="chanInput" placeholder="URL ou @Nom..." class="flex-1 bg-transparent px-6 outline-none">
+                <button onclick="runChannel()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase italic">Scanner</button>
             </div>
-            <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
-                <div class="xl:col-span-1 glass p-6 space-y-4 h-fit">
-                    <input type="file" id="thumbInput" class="text-xs">
-                    <textarea id="testTitle" oninput="updateMockupText()" class="w-full bg-white/5 p-3 rounded-lg text-xs h-20" placeholder="Titre"></textarea>
-                    <input type="text" id="testChannel" oninput="updateMockupText()" value="Ma Chaîne" class="w-full bg-white/5 p-3 rounded-lg text-xs">
-                    <button onclick="refreshMockup()" class="w-full bg-green-500 text-black py-2 rounded-lg font-bold text-xs uppercase transition">Actualiser Flux</button>
+            <div id="chan-res" class="hidden space-y-8">
+                <div class="glass p-8 flex items-center gap-8 border-l-4 border-green-500">
+                    <img id="chan-img" class="w-24 h-24 rounded-full border-2 border-green-500">
+                    <div class="text-white"><h2 id="chan-t" class="text-2xl font-black uppercase">-</h2><p class="text-gray-400 uppercase text-xs font-bold">Subs: <span id="chan-s" class="text-green-500">-</span></p></div>
                 </div>
-                <div class="xl:col-span-3" id="yt-feed-container">
-                    <div id="yt-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-black/40 p-6 rounded-3xl">
-                        <div class="flex flex-col gap-3" id="my-video-card">
-                            <img id="mock-img" src="https://via.placeholder.com/640x360" class="rounded-xl border-2 border-green-500 shadow-lg shadow-green-500/20 aspect-video object-cover">
-                            <div class="flex gap-3">
-                                <div class="w-10 h-10 rounded-full bg-green-500/20 flex-shrink-0"></div>
-                                <div><h3 id="mock-title" class="text-sm font-bold text-white yt-card-title">-</h3><p id="mock-channel" class="text-xs text-gray-400 mt-1">Ma Chaîne</p></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="chan-videos-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"></div>
             </div>
         </section>
 
-        <!-- SPY SEO -->
+        <!-- CONFERENCES (MP4) -->
+        <section id="page-conf" class="page space-y-8">
+            <h1 class="text-4xl font-black font-pro italic uppercase">Les <span class="text-green-500">Conférences</span></h1>
+            <div class="admin-only glass p-6 border-l-4 border-green-500 space-y-4 mb-10 text-white">
+                <input type="text" id="conf-title-in" placeholder="Titre..." class="w-full p-3 rounded-xl">
+                <input type="file" id="conf-file-in" accept="video/mp4" class="text-xs">
+                <button onclick="addConf()" class="bg-green-500 text-black px-8 py-3 rounded-xl font-black uppercase italic">Publier MP4</button>
+            </div>
+            <div id="conf-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-white"></div>
+        </section>
+
+        <!-- SEO & MOCKUP -->
         <section id="page-seo" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Spy <span class="text-green-500">SEO</span></h1>
-            <div class="glass p-3 flex gap-3">
-                <input type="text" id="seoUrl" placeholder="URL vidéo concurrente..." class="flex-1 bg-transparent px-6 py-4 outline-none text-white">
-                <button onclick="extractSEO()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold transition uppercase italic">Extraire Tags</button>
-            </div>
-            <div id="seo-results" class="hidden glass p-8 border-b-4 border-green-500">
-                <div id="tags-container" class="flex flex-wrap gap-2 mb-6"></div>
-                <button onclick="copyTags()" class="mt-4 text-xs font-bold bg-white/10 px-4 py-2 rounded-lg border border-white/10 hover:bg-green-500 transition uppercase italic">Copier les tags</button>
+            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Spy SEO</h1>
+            <div class="glass p-3 flex gap-4 text-white"><input type="text" id="seo-u" class="flex-1 p-3 bg-transparent outline-none" placeholder="URL Vidéo YouTube..."><button onclick="getTags()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase italic">Mots-Clés</button></div>
+            <div id="seo-results" class="hidden glass p-6"><div id="tags-box" class="flex flex-wrap gap-2"></div></div>
+        </section>
+
+        <section id="page-tester" class="page space-y-8">
+            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Mockup Miniature</h1>
+            <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+                <div class="xl:col-span-1 glass p-6 space-y-4 text-white">
+                    <input type="file" id="t-file" class="text-xs">
+                    <input type="text" id="t-title" oninput="updateT()" placeholder="Titre..." class="w-full p-2 rounded-lg">
+                    <button onclick="loadFlux()" class="w-full bg-green-500 text-black py-3 rounded-xl font-black italic uppercase">Actualiser</button>
+                </div>
+                <div id="t-grid" class="xl:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-black/40 p-6 rounded-3xl">
+                    <div id="t-my" class="flex flex-col gap-2">
+                        <img id="t-img" src="https://via.placeholder.com/640x360" class="rounded-xl border-2 border-green-500 aspect-video object-cover">
+                        <h3 id="t-txt" class="font-bold text-sm text-white">Mon Titre</h3>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- TITRE OPTIMIZER -->
         <section id="page-title" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase">Titre <span class="text-green-500">Optimizer</span></h1>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-white">
-                <div class="glass p-8 space-y-6 border-l-4 border-green-500 h-fit">
-                    <input type="text" id="titleInput" oninput="analyzeTitle()" placeholder="Ton titre..." class="w-full p-4 rounded-xl text-xl outline-none">
-                    <button onclick="autoResizeTitle()" class="bg-white/10 px-4 py-2 rounded-lg text-xs font-bold border border-white/20 hover:bg-green-500 transition uppercase italic">✨ Optimiser / Resize</button>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-white/5 p-4 rounded-xl text-center"><p class="text-[10px] text-gray-500 uppercase font-bold">Mots</p><p id="wordCountUI" class="text-xl font-bold">0</p></div>
-                        <div id="scoreBox" class="bg-green-500 p-4 rounded-xl text-center"><p class="text-[10px] text-black font-bold uppercase">Score</p><p id="titleScore" class="text-xl font-bold text-black">0%</p></div>
-                    </div>
-                </div>
+            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Score Titre</h1>
+            <div class="glass p-8 max-w-2xl border-l-4 border-green-500 text-white">
+                <input type="text" id="ti-in" oninput="tiScore()" placeholder="Ton titre..." class="w-full p-4 rounded-xl outline-none">
+                <div class="flex justify-between font-black mt-4 text-green-500 italic"><p>Mots: <span id="ti-count">0</span></p><p>Score: <span id="ti-val">0%</span></p></div>
             </div>
         </section>
 
     </main>
 
     <script>
-        const KEY = "AIzaSyCmnaLlRMNcoVf0tJAo1c1KAiEA_mSgLk4";
-        let currentChannelId = "";
-        let chAvgV = 0, chAvgL = 0, chAvgC = 0;
+        const API_KEY = "AIzaSyCmnaLlRMNcoVf0tJAo1c1KAiEA_mSgLk4";
+        let conferences = [];
 
-        // --- AUTH SYSTEM ---
-        function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
-        function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
-        function checkLogin() {
-            const user = document.getElementById('admin-user').value;
-            const pass = document.getElementById('admin-pass').value;
-            if(user === "Fangames" && pass === "NickUta123") {
-                document.body.classList.add('is-admin');
-                document.getElementById('btn-login-trigger').classList.add('hidden');
-                document.getElementById('btn-logout').classList.remove('hidden');
-                closeLoginModal();
-                alert("Connecté en tant qu'administrateur !");
-            } else { alert("Pseudo ou MDP incorrect."); }
-        }
-        function logout() {
-            document.body.classList.remove('is-admin');
-            document.getElementById('btn-login-trigger').classList.remove('hidden');
-            document.getElementById('btn-logout').classList.add('hidden');
-        }
-
-        // --- CONFERENCES SYSTEM ---
-        let conferences = JSON.parse(localStorage.getItem('mineverse_confs')) || [];
-
-        function addConference() {
-            const title = document.getElementById('conf-title-input').value;
-            const url = document.getElementById('conf-url-input').value;
-            if(!title || !url) return alert("Remplis le titre et l'URL MP4 !");
-            conferences.push({ title, url, id: Date.now() });
-            localStorage.setItem('mineverse_confs', JSON.stringify(conferences));
-            renderConfs();
-            document.getElementById('conf-title-input').value = "";
-            document.getElementById('conf-url-input').value = "";
-        }
-
-        function deleteConf(id) {
-            conferences = conferences.filter(c => c.id !== id);
-            localStorage.setItem('mineverse_confs', JSON.stringify(conferences));
-            renderConfs();
-        }
-
-        function renderConfs() {
-            const grid = document.getElementById('conf-grid');
-            grid.innerHTML = "";
-            conferences.forEach(c => {
-                const div = document.createElement('div');
-                div.className = "glass p-4 space-y-4 border-t-2 border-green-500/30";
-                div.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <h3 class="font-bold text-lg uppercase italic font-pro">${c.title}</h3>
-                        <button onclick="deleteConf(${c.id})" class="admin-only text-red-500 text-[10px] font-bold uppercase">Supprimer</button>
-                    </div>
-                    <video controls class="w-full rounded-xl aspect-video bg-black">
-                        <source src="${c.url}" type="video/mp4">
-                        Votre navigateur ne supporte pas la lecture de vidéo.
-                    </video>
-                `;
-                grid.appendChild(div);
-            });
-        }
-        renderConfs();
-
+        // --- NAVIGATION ---
         function switchPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('page-'+id).classList.add('active');
-            document.getElementById('btn-'+id).classList.add('active');
+            document.getElementById('page-' + id).classList.add('active');
+            document.getElementById('btn-' + id).classList.add('active');
         }
 
-        function getVidId(u) { const r = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^"&?\/\s]{11})/; return u.match(r)?.[1]; }
-        async function forceDownload(u, f) { try { const r = await fetch(u); const b = await r.blob(); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = f; a.click(); } catch (e) { alert("Erreur."); } }
-        function timeToSeconds(t) { if(!t.includes(':')) return parseFloat(t) * 60; const [m, s] = t.split(':').map(parseFloat); return (m * 60) + (s || 0); }
+        // --- ADMIN AUTH ---
+        function openLogin() { document.getElementById('login-modal').classList.remove('hidden'); }
+        function closeLogin() { document.getElementById('login-modal').classList.add('hidden'); }
+        function checkAuth() {
+            if(document.getElementById('in-user').value === "Fangames" && document.getElementById('in-pass').value === "NickUta123") {
+                document.body.classList.add('is-admin');
+                document.getElementById('login-trigger').classList.add('hidden');
+                document.getElementById('logout-trigger').classList.remove('hidden');
+                closeLogin(); renderConfs(); alert("Staff Connecté !");
+            } else alert("Identifiants incorrects.");
+        }
+        function logout() { document.body.classList.remove('is-admin'); document.getElementById('login-trigger').classList.remove('hidden'); document.getElementById('logout-trigger').classList.add('hidden'); renderConfs(); }
 
-        // --- ALGO ADVICE ---
-        function generateAdvice() {
-            const durationRaw = document.getElementById('adv-duration').value, avdRaw = document.getElementById('adv-avd').value, ctr = parseFloat(document.getElementById('adv-ctr').value);
-            if(!durationRaw || !avdRaw || isNaN(ctr)) return alert("Remplis tous les champs.");
-            const durationSec = timeToSeconds(durationRaw), avdSec = timeToSeconds(avdRaw), retention = (avdSec / durationSec) * 100;
-            const res = document.getElementById('advice-result'), content = document.getElementById('advice-content');
-            res.classList.remove('hidden'); content.innerHTML = "";
-            let adviceHTML = "";
-            if(ctr < 4) adviceHTML += `<div class="advice-box border-red-500 text-sm">❌ <b>CTR FAIBLE (${ctr}%)</b> : Ton angle visuel (Minia/Titre) ne marche pas. Change l'image pour créer un choc !</div>`;
-            else if(ctr < 8) adviceHTML += `<div class="advice-box border-yellow-500 text-sm">⚠️ <b>CTR MOYEN (${ctr}%)</b> : Correct. Essaie de rendre le titre plus court pour plus d'impact.</div>`;
-            else adviceHTML += `<div class="advice-box border-green-500 text-sm">✅ <b>CTR BANGER (${ctr}%)</b> : Pack validé. Le clic est acquis !</div>`;
-            if(retention < 35) adviceHTML += `<div class="advice-box border-red-500 text-sm">❌ <b>RÉTENTION FAIBLE (${retention.toFixed(1)}%)</b> : Tu perds les gens trop vite. Ton intro est trop lente.</div>`;
-            else if(retention < 55) adviceHTML += `<div class="advice-box border-yellow-500 text-sm">⚠️ <b>RÉTENTION MOYENNE (${retention.toFixed(1)}%)</b> : Bonne base, mais ajoute plus de dynamisme au montage.</div>`;
-            else adviceHTML += `<div class="advice-box border-green-500 text-sm">✅ <b>RÉTENTION ÉLITE (${retention.toFixed(1)}%)</b> : Le contenu est prenant. Ne change rien à ta structure.</div>`;
-            content.innerHTML = adviceHTML;
+        // --- CONSEILS ALGO ---
+        function calcAdvice() {
+            const d = t2s(document.getElementById('adv-dur').value), w = t2s(document.getElementById('adv-wt').value), c = parseFloat(document.getElementById('adv-ctr').value);
+            if(!d || !w) return alert("Saisie invalide.");
+            const ret = ((w/d)*100).toFixed(1);
+            const res = document.getElementById('adv-res'); res.classList.remove('hidden');
+            let h = `<p>Rétention moyenne : <b>${ret}%</b></p>`;
+            h += ret > 40 ? '✅ ENGAGEMENT VALIDÉ' : '❌ INTRO À CHANGER';
+            h += `<p class="mt-2">CTR : <b>${c}%</b></p>`;
+            h += c > 6 ? '✅ MINIATURE ELITE' : '⚠️ PACK VISUEL À AMÉLIORER';
+            res.innerHTML = h;
         }
 
-        // --- COMMENT FORGE ---
-        function setCommentTheme(t) { const c = document.getElementById('comment-capture'); if(t==='light') c.classList.add('yt-light'); else c.classList.remove('yt-light'); }
-        function updateComment() {
-            document.getElementById('commPreviewPseudo').innerText = document.getElementById('commPseudo').value || "@pseudo";
-            document.getElementById('commPreviewText').innerText = document.getElementById('commText').value || "Commentaire...";
-            document.getElementById('commPreviewTime').innerText = document.getElementById('commTime').value || "il y a 2 min";
-            document.getElementById('commPreviewLikes').innerText = document.getElementById('commLikes').value || "0";
-        }
-        document.getElementById('commAvatarInput').onchange = e => { const r = new FileReader(); r.onload = x => document.getElementById('commPreviewAvatar').src = x.target.result; r.readAsDataURL(e.target.files[0]); };
-        function downloadComment() { html2canvas(document.getElementById('comment-capture'), { backgroundColor: null, scale: 3, useCORS: true }).then(c => { const l = document.createElement('a'); l.download = `comment.png`; l.href = c.toDataURL(); l.click(); }); }
-
-        // --- API CALLS ---
-        async function analyzeChannel() {
-            const input = document.getElementById('channelInput').value.trim(); if(!input) return;
-            try {
-                let id = ""; const vid = getVidId(input);
-                if (vid) { const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${vid}&key=${KEY}`); const d = await r.json(); id = d.items[0].snippet.channelId; }
-                else if (input.includes("@")) { const h = input.split("@").pop().split("/")[0]; const r = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${h}&key=${KEY}`); const d = await r.json(); id = d.items[0].id.channelId; }
-                else id = input;
-                currentChannelId = id;
-                const cR = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${id}&key=${KEY}`);
-                const cD = await cR.json(), chan = cD.items[0];
-                chAvgV = Math.round(chan.statistics.viewCount / chan.statistics.videoCount);
-                document.getElementById('channel-info').classList.remove('hidden');
-                document.getElementById('chan-pdp').src = chan.snippet.thumbnails.medium.url;
-                document.getElementById('chan-name').innerText = chan.snippet.title;
-                document.getElementById('chan-subs').innerText = parseInt(chan.statistics.subscriberCount).toLocaleString();
-                document.getElementById('chan-avg-views').innerText = chAvgV.toLocaleString();
-                loadChannelVideos();
-            } catch(e) { alert("Chaîne introuvable."); }
-        }
-
-        async function loadChannelVideos() {
-            const grid = document.getElementById('chan-best-grid'); grid.innerHTML = "<p class='col-span-full opacity-30 text-center py-10 uppercase font-black'>SCANNING...</p>";
-            const r = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${currentChannelId}&maxResults=10&order=date&type=video&key=${KEY}`);
-            const d = await r.json(), ids = d.items.map(v => v.id.videoId).join(',');
-            const sR = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${ids}&key=${KEY}`);
-            const sD = await sR.json();
-            let totalL = 0, totalC = 0;
-            sD.items.forEach(v => { totalL += parseInt(v.statistics.likeCount || 0); totalC += parseInt(v.statistics.commentCount || 0); });
-            chAvgL = Math.round(totalL / sD.items.length); chAvgC = Math.round(totalC / sD.items.length);
-            grid.innerHTML = sD.items.map(v => `
-                <div class="glass p-4 space-y-3 hover:border-green-500 transition">
-                    <div class="img-container"><img src="${v.snippet.thumbnails.high.url}" class="rounded-lg aspect-video object-cover"><div class="dl-overlay" onclick="forceDownload('${v.snippet.thumbnails.high.url}', 'mini.jpg')">SAVE</div></div>
-                    <h3 class="yt-card-title text-xs font-bold h-10 text-white">${v.snippet.title}</h3>
-                    <p class="text-md font-black text-white text-xs">${parseInt(v.statistics.viewCount).toLocaleString()} v.</p>
-                </div>
-            `).join('');
-        }
-
+        // --- PERFORMANCE & SCANNER ---
         async function runAnalysis() {
-            const id = getVidId(document.getElementById('videoUrl').value); if(!id) return alert("URL invalide.");
-            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${id}&key=${KEY}`);
-            const d = await r.json(), v = d.items[0];
-            if(chAvgV === 0) {
-                const cR = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${v.snippet.channelId}&key=${KEY}`);
-                const cD = await cR.json(), cs = cD.items[0].statistics;
-                chAvgV = Math.round(cs.viewCount / cs.videoCount);
-                const vR = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${v.snippet.channelId}&maxResults=5&type=video&key=${KEY}`);
-                const vD = await vR.json(), vIds = vD.items.map(vv => vv.id.videoId).join(',');
-                const sR = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${vIds}&key=${KEY}`);
-                const sD = await sR.json();
-                let tL = 0, tC = 0; sD.items.forEach(vv => { tL += parseInt(vv.statistics.likeCount || 0); tC += parseInt(vv.statistics.commentCount || 0); });
-                chAvgL = Math.round(tL / 5); chAvgC = Math.round(tC / 5);
-            }
+            const id = document.getElementById('videoUrl').value.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1];
+            if(!id) return alert("URL YouTube Incorrecte.");
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${id}&key=${API_KEY}`);
+            const d = await r.json(), v = d.items[0], chanId = v.snippet.channelId;
+            const cr = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${chanId}&key=${API_KEY}`);
+            const cd = await cr.json(), cs = cd.items[0].statistics;
+            const avgV = Math.round(cs.viewCount / cs.videoCount);
+            const sr = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${chanId}&maxResults=5&order=date&type=video&key=${API_KEY}`);
+            const sd = await sr.json(), ids = sd.items.map(i => i.id.videoId).join(',');
+            const tr = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${ids}&key=${API_KEY}`);
+            const td = await tr.json();
+            let tL = 0, tC = 0; td.items.forEach(i => { tL += parseInt(i.statistics.likeCount||0); tC += parseInt(i.statistics.commentCount||0); });
+            const avgL = Math.round(tL/5), avgC = Math.round(tC/5);
+            const pDate = new Date(v.snippet.publishedAt);
             document.getElementById('dash-ana').classList.remove('hidden');
             document.getElementById('ana-thumb').src = v.snippet.thumbnails.high.url;
             document.getElementById('ana-title').innerText = v.snippet.title;
-            const dt = new Date(v.snippet.publishedAt);
-            document.getElementById('ana-jour').innerText = dt.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-            document.getElementById('ana-heure').innerText = dt.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-            document.getElementById('ana-views').innerText = parseInt(v.statistics.viewCount).toLocaleString();
-            document.getElementById('ana-avg').innerText = chAvgV.toLocaleString();
-            document.getElementById('ana-likes').innerText = parseInt(v.statistics.likeCount || 0).toLocaleString();
-            document.getElementById('ana-avg-likes').innerText = chAvgL.toLocaleString();
-            document.getElementById('ana-comms').innerText = parseInt(v.statistics.commentCount || 0).toLocaleString();
-            document.getElementById('ana-avg-comms').innerText = chAvgC.toLocaleString();
-            const ratio = parseInt(v.statistics.viewCount) / (chAvgV || 1);
-            document.getElementById('ana-verdict').innerText = ratio > 1.4 ? "🚀 BANGER" : "⚖️ NORMAL";
+            document.getElementById('ana-v').innerText = parseInt(v.statistics.viewCount).toLocaleString();
+            document.getElementById('ana-av').innerText = avgV.toLocaleString();
+            document.getElementById('ana-l').innerText = parseInt(v.statistics.likeCount||0).toLocaleString();
+            document.getElementById('ana-al').innerText = avgL.toLocaleString();
+            document.getElementById('ana-c').innerText = parseInt(v.statistics.commentCount||0).toLocaleString();
+            document.getElementById('ana-ac').innerText = avgC.toLocaleString();
+            document.getElementById('ana-date').innerText = pDate.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+            document.getElementById('ana-heure').innerText = pDate.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+            const ratio = parseInt(v.statistics.viewCount) / avgV;
+            document.getElementById('ana-verdict').innerText = ratio > 1.3 ? "🚀 BANGER" : "⚖️ NORMAL";
         }
 
-        // --- MOCKUP TOOLS ---
-        function toggleMobileMode() { document.getElementById('yt-feed-container').classList.toggle('mobile-mode'); }
-        function toggleFullscreen() { const el = document.getElementById('yt-feed'); if (!document.fullscreenElement) el.requestFullscreen(); else document.exitFullscreen(); }
-        function updateMockupText() { document.getElementById('mock-title').innerText = document.getElementById('testTitle').value || "Titre"; document.getElementById('mock-channel').innerText = document.getElementById('testChannel').value || "Ma Chaîne"; }
-        async function refreshMockup() {
-            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=FR&maxResults=15&key=${KEY}`);
-            const d = await r.json(), f = document.getElementById('yt-feed'), my = f.firstElementChild; f.innerHTML = ''; f.appendChild(my);
-            d.items.forEach(v => {
-                const div = document.createElement('div'); div.className = "flex flex-col gap-3";
-                div.innerHTML = `<img src="${v.snippet.thumbnails.high.url}" class="rounded-xl aspect-video object-cover"><div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-white/10 flex-shrink-0"></div><div><h3 class="text-sm font-bold text-white yt-card-title">${v.snippet.title}</h3><p class="text-xs text-gray-500">${v.snippet.channelTitle}</p></div></div>`;
-                f.appendChild(div);
+        async function runChannel() {
+            const q = document.getElementById('chanInput').value; if(!q) return;
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${q}&key=${API_KEY}`);
+            const d = await r.json(), cid = d.items[0].id.channelId;
+            const cr = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${cid}&key=${API_KEY}`);
+            const cd = await cr.json(), c = cd.items[0];
+            const avgV = Math.round(parseInt(c.statistics.viewCount) / parseInt(c.statistics.videoCount));
+            document.getElementById('chan-res').classList.remove('hidden');
+            document.getElementById('chan-img').src = c.snippet.thumbnails.medium.url;
+            document.getElementById('chan-t').innerText = c.snippet.title;
+            document.getElementById('chan-s').innerText = parseInt(c.statistics.subscriberCount).toLocaleString();
+            const tr = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${cid}&maxResults=12&order=date&type=video&key=${API_KEY}`);
+            const td = await tr.json(), ids = td.items.map(i => i.id.videoId).join(',');
+            const fr = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${ids}&key=${API_KEY}`);
+            const fd = await fr.json();
+            const grid = document.getElementById('chan-videos-grid'); grid.innerHTML = "";
+            fd.items.forEach(v => {
+                const views = parseInt(v.statistics.viewCount);
+                let b = views > avgV * 1.3 ? "border-green-500" : (views < avgV * 0.7 ? "border-red-500" : "border-yellow-500");
+                grid.innerHTML += `<div class="glass p-3 border-b-4 ${b} text-white"><img src="${v.snippet.thumbnails.medium.url}" class="rounded-lg mb-2"><h4 class="text-[10px] font-bold yt-card-title">${v.snippet.title}</h4><p class="text-[10px] text-green-500 mt-1">${views.toLocaleString()} v.</p></div>`;
             });
         }
-        document.getElementById('thumbInput').onchange = e => { const r = new FileReader(); r.onload = x => document.getElementById('mock-img').src = x.target.result; r.readAsDataURL(e.target.files[0]); };
 
-        // --- SEO & TITLE ---
-        async function extractSEO() {
-            const id = getVidId(document.getElementById('seoUrl').value); if(!id) return alert("URL invalide.");
-            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${KEY}`);
-            const d = await r.json(), tags = d.items[0]?.snippet?.tags;
-            const c = document.getElementById('tags-container'); c.innerHTML = ''; document.getElementById('seo-results').classList.remove('hidden');
-            if(!tags) return c.innerHTML = '<p class="opacity-40 uppercase text-xs">Aucun tag.</p>';
-            tags.forEach(t => { const s = document.createElement('span'); s.className = "tag-badge"; s.innerText = t; c.appendChild(s); });
+        // --- CONFERENCES ---
+        function addConf() {
+            const t = document.getElementById('conf-title-in').value, f = document.getElementById('conf-file-in').files[0];
+            if(!t || !f) return alert("Remplis tout !");
+            conferences.push({t, url: URL.createObjectURL(f), id: Date.now()});
+            renderConfs();
         }
-        function copyTags() { navigator.clipboard.writeText(Array.from(document.querySelectorAll('.tag-badge')).map(s => s.innerText).join(', ')); alert("Copié !"); }
-        function analyzeTitle() { const t = document.getElementById('titleInput').value.trim(), count = t.split(/\s+/).filter(w => w.length > 0).length; document.getElementById('wordCountUI').innerText = count; document.getElementById('titleScore').innerText = count >= 5 && count <= 10 ? "100%" : "50%"; }
-        function autoResizeTitle() { let t = document.getElementById('titleInput').value.trim(), words = t.split(/\s+/).slice(0, 10); document.getElementById('titleInput').value = words.join(' '); analyzeTitle(); }
+        function delConf(id) { conferences = conferences.filter(c => c.id !== id); renderConfs(); }
+        function renderConfs() {
+            const grid = document.getElementById('conf-grid'), isAdmin = document.body.classList.contains('is-admin');
+            grid.innerHTML = conferences.length ? "" : "<p class='col-span-full opacity-30 text-center uppercase py-10'>Vide</p>";
+            conferences.forEach(c => {
+                grid.innerHTML += `<div class="glass p-4 space-y-3 border-t-2 border-green-500/20"><div class="flex justify-between items-center text-white"><b>${c.t}</b>${isAdmin?`<button onclick="delConf(${c.id})" class="text-red-500 text-[10px] font-bold uppercase">Supprimer</button>`:''}</div><div class="video-wrapper"><video controls src="${c.url}"></video></div></div>`;
+            });
+        }
+
+        // --- UTILS ---
+        function t2s(t) { if(!t.includes(':')) return Number(t); const [m, s] = t.split(':').map(Number); return (m * 60) + (s || 0); }
+        function updateT() { document.getElementById('t-txt').innerText = document.getElementById('t-title').value; }
+        document.getElementById('t-file').onchange = e => { const r = new FileReader(); r.onload = x => document.getElementById('t-img').src = x.target.result; r.readAsDataURL(e.target.files[0]); };
+        function upC() { document.getElementById('cp-user').innerText = document.getElementById('c-user').value || "@pseudo"; document.getElementById('cp-txt').innerText = document.getElementById('c-txt').value || "Ton message..."; document.getElementById('cp-likes').innerText = document.getElementById('c-likes').value || "0"; }
+        document.getElementById('c-pdp-in').onchange = e => { const r = new FileReader(); r.onload = x => document.getElementById('cp-pdp').src = x.target.result; r.readAsDataURL(e.target.files[0]); };
+        function exportC() { html2canvas(document.getElementById('comment-capture'), { backgroundColor: null, scale: 3 }).then(c => { const l = document.createElement('a'); l.download = `comment.png`; l.href = c.toDataURL(); l.click(); }); }
+        function tiScore() { const v = document.getElementById('ti-in').value.trim(); document.getElementById('ti-count').innerText = v ? v.split(/\s+/).length : 0; document.getElementById('ti-val').innerText = v.length > 25 ? "95%" : "40%"; }
+        async function loadFlux() {
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=FR&maxResults=9&key=${API_KEY}`);
+            const d = await r.json(), grid = document.getElementById('t-grid'), my = document.getElementById('t-my');
+            grid.innerHTML = ""; grid.appendChild(my);
+            d.items.forEach(i => { grid.innerHTML += `<div class="flex flex-col gap-2"><img src="${i.snippet.thumbnails.high.url}" class="rounded-xl aspect-video object-cover"><h3 class="text-xs font-bold yt-card-title text-white">${i.snippet.title}</h3></div>`; });
+        }
+        async function getTags() {
+            const id = document.getElementById('seo-u').value.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1];
+            if(!id) return;
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${API_KEY}`);
+            const d = await r.json(), tags = d.items[0].snippet.tags || [];
+            document.getElementById('seo-results').classList.remove('hidden');
+            document.getElementById('tags-box').innerHTML = tags.map(t => `<span class="tag-badge">${t}</span>`).join('');
+        }
     </script>
 </body>
 </html>
