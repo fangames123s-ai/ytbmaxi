@@ -42,9 +42,33 @@
         input:focus { border-color: #00ff00 !important; outline: none; }
         .tag-badge { background: rgba(0,255,0,0.1); border: 1px solid rgba(0,255,0,0.2); padding: 4px 10px; border-radius: 8px; font-size: 12px; color: #00ff00; }
         .advice-box { border-left: 4px solid #00ff00; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 0 12px 12px 0; }
+
+        /* Admin Styles */
+        #admin-btn-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .admin-only { display: none; }
+        body.is-admin .admin-only { display: block; }
     </style>
 </head>
 <body class="flex flex-col lg:flex-row min-h-screen">
+
+    <!-- BOUTON CONNEXION ADMIN -->
+    <div id="admin-btn-container">
+        <button id="btn-login-trigger" onclick="openLoginModal()" class="bg-green-500 hover:bg-green-400 text-black px-5 py-2 rounded-full font-black text-[10px] uppercase italic transition shadow-lg shadow-green-500/20">Se connecter en tant qu'administrateur</button>
+        <button id="btn-logout" onclick="logout()" class="hidden bg-red-600 text-white px-5 py-2 rounded-full font-black text-[10px] uppercase italic transition">Déconnexion (Admin)</button>
+    </div>
+
+    <!-- MODAL CONNEXION -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[2000] flex items-center justify-center p-4">
+        <div class="glass p-8 w-full max-w-sm border-green-500/30">
+            <h2 class="text-2xl font-black uppercase italic mb-6">Accès <span class="text-green-500">Privé</span></h2>
+            <div class="space-y-4">
+                <input type="text" id="admin-user" placeholder="Pseudo" class="w-full p-3 rounded-xl">
+                <input type="password" id="admin-pass" placeholder="Mot de passe" class="w-full p-3 rounded-xl">
+                <button onclick="checkLogin()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic transition">Entrer</button>
+                <button onclick="closeLoginModal()" class="w-full text-gray-500 text-[10px] uppercase font-bold">Annuler</button>
+            </div>
+        </div>
+    </div>
 
     <!-- NAVIGATION LATERALE -->
     <nav class="w-full lg:w-72 glass m-2 p-6 flex flex-col gap-4 z-50 border-r border-green-600/10 h-screen sticky top-0">
@@ -52,6 +76,7 @@
         
         <div class="flex flex-col gap-1">
             <button onclick="switchPage('advice')" id="btn-advice" class="sidebar-btn active">🧠 Conseils Algo</button>
+            <button onclick="switchPage('conf')" id="btn-conf" class="sidebar-btn">🎬 Conférences</button>
             <button onclick="switchPage('comment')" id="btn-comment" class="sidebar-btn">💬 Comment Forge</button>
             <button onclick="switchPage('channel')" id="btn-channel" class="sidebar-btn">📺 Analyseur Chaîne</button>
             <button onclick="switchPage('analyzer')" id="btn-analyzer" class="sidebar-btn">📊 Performance Vidéo</button>
@@ -67,6 +92,26 @@
     </nav>
 
     <main class="flex-1 p-4 lg:p-10">
+
+        <!-- PAGE CONFERENCES -->
+        <section id="page-conf" class="page space-y-8">
+            <h1 class="text-4xl font-black font-pro italic uppercase">Conférences <span class="text-green-500">MP4</span></h1>
+            
+            <!-- ADMIN ONLY : AJOUTER CONF -->
+            <div class="admin-only glass p-6 border-l-4 border-green-500 space-y-4 mb-8">
+                <h3 class="text-xs font-bold uppercase text-green-500 tracking-widest">Ajouter une nouvelle conférence</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="conf-title-input" placeholder="Titre de la conférence..." class="p-3 rounded-xl">
+                    <input type="text" id="conf-url-input" placeholder="Lien MP4 (URL)..." class="p-3 rounded-xl">
+                </div>
+                <button onclick="addConference()" class="bg-green-500 text-black px-6 py-3 rounded-xl font-black uppercase italic">Publier la conférence</button>
+            </div>
+
+            <!-- GRID DES CONFERENCES -->
+            <div id="conf-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Les conférences s'affichent ici -->
+            </div>
+        </section>
 
         <!-- PAGE CONSEILS ALGO -->
         <section id="page-advice" class="page active space-y-8">
@@ -263,6 +308,67 @@
         const KEY = "AIzaSyCmnaLlRMNcoVf0tJAo1c1KAiEA_mSgLk4";
         let currentChannelId = "";
         let chAvgV = 0, chAvgL = 0, chAvgC = 0;
+
+        // --- AUTH SYSTEM ---
+        function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
+        function checkLogin() {
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+            if(user === "Fangames" && pass === "NickUta123") {
+                document.body.classList.add('is-admin');
+                document.getElementById('btn-login-trigger').classList.add('hidden');
+                document.getElementById('btn-logout').classList.remove('hidden');
+                closeLoginModal();
+                alert("Connecté en tant qu'administrateur !");
+            } else { alert("Pseudo ou MDP incorrect."); }
+        }
+        function logout() {
+            document.body.classList.remove('is-admin');
+            document.getElementById('btn-login-trigger').classList.remove('hidden');
+            document.getElementById('btn-logout').classList.add('hidden');
+        }
+
+        // --- CONFERENCES SYSTEM ---
+        let conferences = JSON.parse(localStorage.getItem('mineverse_confs')) || [];
+
+        function addConference() {
+            const title = document.getElementById('conf-title-input').value;
+            const url = document.getElementById('conf-url-input').value;
+            if(!title || !url) return alert("Remplis le titre et l'URL MP4 !");
+            conferences.push({ title, url, id: Date.now() });
+            localStorage.setItem('mineverse_confs', JSON.stringify(conferences));
+            renderConfs();
+            document.getElementById('conf-title-input').value = "";
+            document.getElementById('conf-url-input').value = "";
+        }
+
+        function deleteConf(id) {
+            conferences = conferences.filter(c => c.id !== id);
+            localStorage.setItem('mineverse_confs', JSON.stringify(conferences));
+            renderConfs();
+        }
+
+        function renderConfs() {
+            const grid = document.getElementById('conf-grid');
+            grid.innerHTML = "";
+            conferences.forEach(c => {
+                const div = document.createElement('div');
+                div.className = "glass p-4 space-y-4 border-t-2 border-green-500/30";
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-lg uppercase italic font-pro">${c.title}</h3>
+                        <button onclick="deleteConf(${c.id})" class="admin-only text-red-500 text-[10px] font-bold uppercase">Supprimer</button>
+                    </div>
+                    <video controls class="w-full rounded-xl aspect-video bg-black">
+                        <source src="${c.url}" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture de vidéo.
+                    </video>
+                `;
+                grid.appendChild(div);
+            });
+        }
+        renderConfs();
 
         function switchPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
