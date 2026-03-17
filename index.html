@@ -20,31 +20,25 @@
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         
-        .admin-only { display: none !important; }
-        body.is-admin .admin-only { display: block !important; }
-
-        /* Comment Mockup compact ultra-pro */
         #comment-capture { padding: 16px; border-radius: 12px; width: 480px; background-color: #0f0f0f; border: 1px solid rgba(255,255,255,0.1); }
-        
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 15px; background: #000; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
-        input, textarea { border: 1px solid rgba(255,255,255,0.1) !important; background: rgba(255,255,255,0.05) !important; color: white !important; outline: none; }
-        input:focus { border-color: #00ff00 !important; }
+        input, textarea, select { border: 1px solid rgba(255,255,255,0.1) !important; background: rgba(255,255,255,0.05) !important; color: white !important; outline: none; }
         .tag-badge { background: rgba(0,255,0,0.1); border: 1px solid rgba(0,255,0,0.2); padding: 4px 10px; border-radius: 8px; font-size: 11px; color: #00ff00; font-weight: bold; }
-        .yt-card-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         
-        /* Mockup Miniature éclairé */
-        .mockup-area { background: #222; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 50px rgba(0,0,0,0.5); }
+        .mockup-area { background: #0f0f0f; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); transition: 0.5s; }
+        .fullscreen-mockup { position: fixed !important; inset: 0 !important; z-index: 5000 !important; width: 100vw !important; height: 100vh !important; max-height: 100vh !important; border-radius: 0 !important; padding: 40px !important; background: #000 !important; overflow-y: auto !important; }
+        
+        #close-immersion { display: none; position: fixed; top: 20px; right: 40px; z-index: 6000; background: #ff0000; color: white; padding: 10px 20px; border-radius: 50px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
+        .fullscreen-mockup + #close-immersion { display: block; }
+
+        #tw-canvas-container { position: relative; width: 320px; height: 500px; border-radius: 15px; overflow: hidden; border: 2px solid #303032; }
+        .rec-dot { position: absolute; top: 10px; right: 10px; background: red; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; animation: blink 1s infinite; display: none; }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body class="flex flex-col lg:flex-row min-h-screen">
-
-    <!-- BOUTON STAFF -->
-    <div class="fixed top-5 right-5 z-[1000] flex gap-3">
-        <button id="login-trigger" onclick="openLogin()" class="bg-green-500 text-black px-6 py-2 rounded-full font-black text-[10px] uppercase italic transition shadow-lg hover:scale-105">Connexion Staff</button>
-        <button id="logout-trigger" onclick="logout()" class="hidden bg-red-600 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase italic transition">Déconnexion</button>
-    </div>
 
     <!-- SIDEBAR -->
     <nav class="w-full lg:w-72 glass m-2 p-6 flex flex-col gap-4 z-50 h-screen sticky top-0">
@@ -54,6 +48,7 @@
             <button onclick="switchPage('conf')" id="btn-conf" class="sidebar-btn">🎤 Conférences</button>
             <button onclick="switchPage('analyzer')" id="btn-analyzer" class="sidebar-btn">📊 Perf Vidéo</button>
             <button onclick="switchPage('comment')" id="btn-comment" class="sidebar-btn">💬 Comment Forge</button>
+            <button onclick="switchPage('twitch')" id="btn-twitch" class="sidebar-btn">🎬 Twitch Live Sim</button>
             <button onclick="switchPage('channel')" id="btn-channel" class="sidebar-btn">📺 Scanner Chaîne</button>
             <button onclick="switchPage('tester')" id="btn-tester" class="sidebar-btn">🖼️ Mockup Mini</button>
             <button onclick="switchPage('seo')" id="btn-seo" class="sidebar-btn">🔍 Spy SEO</button>
@@ -63,32 +58,7 @@
 
     <main class="flex-1 p-4 lg:p-10">
 
-        <!-- PERFORMANCE VIDÉO (VERDICT COMPLET : BANGER / NORMAL / NUL) -->
-        <section id="page-analyzer" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Performance Vidéo</h1>
-            <div class="glass p-3 flex gap-3 text-white">
-                <input type="text" id="videoUrl" placeholder="Coller le lien de la vidéo..." class="flex-1 bg-transparent px-6 outline-none">
-                <button onclick="runAnalysis()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase italic transition">Calculer</button>
-            </div>
-            <div id="dash-ana" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 text-white">
-                <div class="glass p-6 border-t-4 border-green-500 text-center">
-                    <img id="ana-thumb" class="w-full rounded-xl aspect-video object-cover" src="">
-                    <h2 id="ana-title" class="font-bold text-sm mt-4">-</h2>
-                    <div id="ana-verdict" class="py-3 mt-4 border-2 rounded-full font-black text-sm uppercase italic tracking-widest">-</div>
-                </div>
-                <div class="glass p-6 flex flex-col items-center justify-center">
-                    <p id="ana-v" class="text-6xl font-black">-</p>
-                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Vues actuelles</p>
-                </div>
-                <div class="glass p-6 space-y-4">
-                    <div><p class="text-gray-500 text-[10px] uppercase font-bold">Moyenne de la chaîne</p><p id="ana-av" class="text-xl font-bold">-</p></div>
-                    <div><p class="text-gray-500 text-[10px] uppercase font-bold">Likes</p><p id="ana-l" class="text-xl font-bold">-</p></div>
-                    <div><p class="text-gray-500 text-[10px] uppercase font-bold">Commentaires</p><p id="ana-c" class="text-xl font-bold">-</p></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CONSEILS ALGO (REFAIT : CRITIQUE RÉELLE) -->
+        <!-- CONSEILS ALGO -->
         <section id="page-advice" class="page active space-y-8">
             <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Conseils Algorithme</h1>
             <div class="glass p-8 max-w-2xl space-y-6">
@@ -98,7 +68,6 @@
                 </div>
                 <input type="number" id="adv-ctr" placeholder="Taux de clic (CTR %)" class="w-full p-4 rounded-xl">
                 <button onclick="calcAdvice()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic transition">Analyser les points faibles</button>
-                
                 <div id="adv-res" class="hidden p-6 glass border-l-4 border-green-500 space-y-4">
                     <div id="adv-stats" class="text-2xl font-black italic uppercase text-green-500"></div>
                     <div id="adv-tips" class="text-sm text-gray-300 leading-relaxed font-medium"></div>
@@ -106,32 +75,77 @@
             </div>
         </section>
 
-        <!-- COMMENT FORGE (YOUTUBE DESIGN + ICONS) -->
+        <!-- PERFORMANCE VIDÉO -->
+        <section id="page-analyzer" class="page space-y-8">
+            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Performance Vidéo</h1>
+            <div class="glass p-3 flex gap-3 text-white">
+                <input type="text" id="videoUrl" placeholder="Lien de la vidéo..." class="flex-1 bg-transparent px-6 outline-none">
+                <button onclick="runAnalysis()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase italic transition">Calculer</button>
+            </div>
+            <div id="dash-ana" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 text-white">
+                <div class="glass p-6 border-t-4 border-green-500 text-center">
+                    <img id="ana-thumb" class="w-full rounded-xl aspect-video object-cover">
+                    <h2 id="ana-title" class="font-bold text-sm mt-4 text-white"></h2>
+                    <div id="ana-verdict" class="py-3 mt-4 border-2 rounded-full font-black text-sm uppercase italic tracking-widest"></div>
+                </div>
+                <div class="glass p-6 flex flex-col items-center justify-center">
+                    <p id="ana-v" class="text-5xl font-black text-white">-</p>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Vues actuelles</p>
+                </div>
+                <div class="glass p-6 space-y-4 text-white">
+                    <div><p class="text-gray-500 text-[10px] uppercase font-bold">Moyenne de la chaîne</p><p id="ana-av" class="text-xl font-bold">-</p></div>
+                    <div><p class="text-gray-500 text-[10px] uppercase font-bold">Likes</p><p id="ana-l" class="text-xl font-bold">-</p></div>
+                    <div><p class="text-gray-500 text-[10px] uppercase font-bold">Commentaires</p><p id="ana-c" class="text-xl font-bold">-</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCANNER CHAINE -->
+        <section id="page-channel" class="page space-y-8">
+            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Scanner Chaîne</h1>
+            <div class="glass p-3 flex gap-3 text-white">
+                <input type="text" id="chanInput" placeholder="Nom de la chaîne..." class="flex-1 bg-transparent px-6 outline-none">
+                <button onclick="runChannel()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase italic transition">Analyser</button>
+            </div>
+            <div id="chan-res" class="hidden space-y-8">
+                <div class="glass p-8 flex items-center gap-8 border-l-4 border-green-500">
+                    <img id="chan-img" class="w-24 h-24 rounded-full border-2 border-green-500">
+                    <div class="text-white">
+                        <h2 id="chan-t" class="text-2xl font-black uppercase">-</h2>
+                        <p class="text-xs text-gray-400 font-bold uppercase">Abonnés: <span id="chan-s" class="text-green-500">-</span></p>
+                    </div>
+                </div>
+                <div id="chan-videos-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"></div>
+            </div>
+        </section>
+
+        <!-- COMMENT FORGE (CORRIGÉ AVEC ICONS LIKE/DISLIKE) -->
         <section id="page-comment" class="page space-y-8">
             <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Comment Forge</h1>
             <div class="flex flex-col xl:flex-row gap-10 items-start">
-                <div class="glass p-6 w-full xl:w-80 space-y-4 text-white">
+                <div class="glass p-6 w-full xl:w-80 space-y-4">
                     <input type="file" id="c-pdp-in" class="text-xs w-full">
-                    <input type="text" id="c-user" oninput="upC()" placeholder="Pseudo (ex: @NickUta)" class="w-full p-3 rounded-lg">
-                    <textarea id="c-txt" oninput="upC()" placeholder="Le message..." class="w-full p-3 rounded-lg h-24"></textarea>
-                    <input type="text" id="c-likes" oninput="upC()" placeholder="Nombre de likes..." class="w-full p-3 rounded-lg">
-                    <button onclick="exportC()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic">Exporter l'image</button>
+                    <input type="text" id="c-user" oninput="upC()" placeholder="Pseudo (ex: @NickUta)" class="w-full p-3 rounded-lg text-white">
+                    <textarea id="c-txt" oninput="upC()" placeholder="Le message..." class="w-full p-3 rounded-lg h-24 text-white"></textarea>
+                    <input type="text" id="c-likes" oninput="upC()" placeholder="Nombre de likes..." class="w-full p-3 rounded-lg text-white">
+                    <button onclick="exportC()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic transition">Exporter l'image</button>
                 </div>
-                <div class="flex-1 flex justify-center w-full">
-                    <div id="comment-capture">
-                        <div class="flex items-start gap-3">
-                            <img id="cp-pdp" src="https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg" class="w-10 h-10 rounded-full object-cover bg-zinc-800 flex-shrink-0">
-                            <div class="flex-1 text-white">
-                                <div class="flex items-center gap-2 mb-1"><span id="cp-user" class="text-[13px] font-bold text-gray-200">@pseudo</span><span class="text-[12px] text-gray-500">il y a 2 heures</span></div>
-                                <p id="cp-txt" class="text-[14px] text-gray-300 leading-snug mb-3">Ton texte apparaîtra ici...</p>
-                                <div class="flex items-center gap-4 opacity-80">
-                                    <div class="flex items-center gap-1.5">
-                                        <svg viewBox="0 0 24 24" class="w-4 h-4 fill-white"><path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.13,0.24-1.53,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.74,2.18-1.78l1.39-6.89C21.39,11.3,20.21,11,18.77,11z M7,20H4v-8h3V20z"></path></svg>
-                                        <span id="cp-likes" class="text-[12px]">0</span>
-                                    </div>
-                                    <svg viewBox="0 0 24 24" class="w-4 h-4 fill-white"><path d="M17,4h-1H6.57C5.5,4,4.59,4.74,4.38,5.78l-1.39,6.89C2.61,13.7,3.79,14,5.23,14h4.23l-1.52,4.94 C7.62,19.97,8.46,21,9.62,21c0.58,0,1.13-0.24,1.53-0.65L17,14h4V4H17z"></path></svg>
-                                    <span class="text-[12px] font-bold uppercase tracking-tighter">Répondre</span>
+                <div id="comment-capture">
+                    <div class="flex items-start gap-3">
+                        <img id="cp-pdp" src="https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg" class="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-zinc-800">
+                        <div class="flex-1 text-white">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span id="cp-user" class="text-[13px] font-bold">@pseudo</span>
+                                <span class="text-[12px] text-gray-500">il y a 2 heures</span>
+                            </div>
+                            <p id="cp-txt" class="text-[14px] text-gray-300 leading-snug mb-3">Ton texte apparaîtra ici...</p>
+                            <div class="flex items-center gap-4 mt-2 opacity-90">
+                                <div class="flex items-center gap-1.5">
+                                    <svg viewBox="0 0 24 24" class="w-4 h-4 fill-white"><path d="M18.77,11h-4.23l1.52-4.94C16.38,5.03,15.54,4,14.38,4c-0.58,0-1.13,0.24-1.53,0.65L7,11H3v10h4h1h9.43 c1.06,0,1.97-0.74,2.18-1.78l1.39-6.89C21.39,11.3,20.21,11,18.77,11z M7,20H4v-8h3V20z"></path></svg>
+                                    <span id="cp-likes" class="text-[12px] text-gray-400">0</span>
                                 </div>
+                                <svg viewBox="0 0 24 24" class="w-4 h-4 fill-white"><path d="M17,4h-1H6.57C5.5,4,4.59,4.74,4.38,5.78l-1.39,6.89C2.61,13.7,3.79,14,5.23,14h4.23l-1.52,4.94 C7.62,19.97,8.46,21,9.62,21c0.58,0,1.13-0.24,1.53-0.65L17,14h4V4H17z"></path></svg>
+                                <span class="text-[12px] font-bold text-gray-400 uppercase tracking-tighter cursor-pointer ml-2">Répondre</span>
                             </div>
                         </div>
                     </div>
@@ -139,53 +153,47 @@
             </div>
         </section>
 
-        <!-- MOCKUP MINI (ZONE ÉCLAIRÉE) -->
+        <!-- MOCKUP MINIATURE -->
         <section id="page-tester" class="page space-y-8">
             <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Mockup Miniature</h1>
             <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
                 <div class="xl:col-span-1 glass p-6 space-y-4 text-white">
                     <input type="file" id="t-file" class="text-xs">
-                    <input type="text" id="t-title" oninput="updateT()" placeholder="Titre vidéo..." class="w-full p-2 rounded-lg">
-                    <button onclick="loadFlux()" class="w-full bg-green-500 text-black py-3 rounded-xl font-black uppercase italic">Simuler la page d'accueil</button>
+                    <input type="text" id="t-title" oninput="updateT()" placeholder="Titre..." class="w-full p-2 rounded-lg">
+                    <button onclick="loadFlux()" class="w-full bg-green-500 text-black py-3 rounded-xl font-black uppercase italic">Flux (50 vidéos)</button>
+                    <button onclick="toggleImmersion()" class="w-full border border-green-500 text-green-500 py-3 rounded-xl font-black uppercase italic">Plein Écran</button>
                 </div>
-                <div id="t-grid" class="xl:col-span-3 mockup-area p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto max-h-[600px]">
-                    <div id="t-my" class="flex flex-col gap-2">
-                        <img id="t-img" src="https://via.placeholder.com/640x360" class="rounded-xl border-2 border-green-500 aspect-video object-cover shadow-2xl">
-                        <h3 id="t-txt" class="font-bold text-sm text-white">Titre de ta vidéo</h3>
+                <div class="xl:col-span-3 relative">
+                    <div id="t-grid" class="mockup-area p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto max-h-[600px]">
+                        <div id="t-my" class="flex flex-col gap-2">
+                            <img id="t-img" src="https://via.placeholder.com/640x360" class="rounded-xl border-4 border-green-500 aspect-video object-cover shadow-2xl">
+                            <h3 id="t-txt" class="font-bold text-sm text-white">Titre de ta vidéo</h3>
+                        </div>
                     </div>
+                    <button id="close-immersion" onclick="toggleImmersion()">Quitter le plein écran</button>
                 </div>
             </div>
         </section>
 
-        <!-- CONFERENCES / SCANNER / SEO / TITRE -->
-        <section id="page-conf" class="page space-y-8">
-            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Conférences</h1>
-            <div id="conf-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-white">
-                <div class="glass p-5 space-y-4 border-t-2 border-green-500">
-                    <h2 class="font-black italic uppercase">Premier pas sur le mineverse</h2>
-                    <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/SRE_LID-G3Y" frameborder="0" allowfullscreen></iframe></div>
+        <!-- TWITCH Simulator (Gardé) -->
+        <section id="page-twitch" class="page space-y-8">
+            <h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Twitch Simulator</h1>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                <div class="glass p-8 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="number" id="tw-duration" value="10" class="p-3 rounded-xl">
+                        <input type="number" id="tw-interval" value="0.5" step="0.1" class="p-3 rounded-xl">
+                    </div>
+                    <select id="tw-bg" class="w-full p-3 rounded-xl"><option value="twitch">Noir Twitch</option><option value="green">Fond Vert</option></select>
+                    <textarea id="tw-users" class="w-full p-3 rounded-xl h-20 text-xs">xQc, Ninja, Kamet0</textarea>
+                    <textarea id="tw-msgs" class="w-full p-3 rounded-xl h-20 text-xs">POG, GG, LETS GO</textarea>
+                    <button onclick="generateTwitchVideo()" id="tw-btn" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase">Générer Vidéo HD</button>
                 </div>
+                <div id="tw-canvas-container"><div id="tw-rec" class="rec-dot">REC</div><canvas id="tw-canvas" width="640" height="1000" class="w-full h-full"></canvas></div>
             </div>
         </section>
-
-        <section id="page-channel" class="page space-y-8"><h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Scanner Chaîne</h1><div class="glass p-3 flex gap-3 text-white"><input type="text" id="chanInput" placeholder="Nom de la chaîne..." class="flex-1 bg-transparent px-6 outline-none"><button onclick="runChannel()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase">Analyser</button></div><div id="chan-res" class="hidden space-y-8"><div class="glass p-8 flex items-center gap-8 border-l-4 border-green-500"><img id="chan-img" class="w-24 h-24 rounded-full border-2 border-green-500"><div class="text-white"><h2 id="chan-t" class="text-2xl font-black uppercase">-</h2><p class="text-xs text-gray-400 font-bold">Abonnés: <span id="chan-s" class="text-green-500">-</span></p></div></div><div id="chan-videos-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"></div></div></section>
-        <section id="page-seo" class="page space-y-8"><h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Spy SEO</h1><div class="glass p-3 flex gap-4 text-white"><input type="text" id="seo-u" class="flex-1 bg-transparent outline-none" placeholder="Lien..."><button onclick="getTags()" class="bg-green-500 text-black px-8 py-4 rounded-xl font-bold uppercase">Tags</button></div><div id="seo-results" class="hidden glass p-6"><div id="tags-box" class="flex flex-wrap gap-2"></div></div></section>
-        <section id="page-title" class="page space-y-8"><h1 class="text-4xl font-black font-pro italic uppercase text-green-500">Score Titre</h1><div class="glass p-8 max-w-2xl border-l-4 border-green-500 text-white"><input type="text" id="ti-in" oninput="tiScore()" placeholder="Ton titre..." class="w-full p-4 rounded-xl outline-none"><div class="flex justify-between font-black mt-4 text-green-500 italic"><p>Mots: <span id="ti-count">0</span></p><p>SEO: <span id="ti-val">0%</span></p></div></div></section>
 
     </main>
-
-    <!-- MODAL STAFF -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-xl z-[2000] flex items-center justify-center p-4">
-        <div class="glass p-8 w-full max-w-sm border-green-500 text-center text-white">
-            <h2 class="text-2xl font-black uppercase italic mb-6 tracking-widest">MINE<span class="text-green-500">VERSE</span> STAFF</h2>
-            <div class="space-y-4">
-                <input type="text" id="in-user" placeholder="ID" class="w-full p-4 rounded-xl">
-                <input type="password" id="in-pass" placeholder="PASSWORD" class="w-full p-4 rounded-xl">
-                <button onclick="checkAuth()" class="w-full bg-green-500 text-black py-4 rounded-xl font-black uppercase italic transition hover:scale-95">Connexion</button>
-                <button onclick="closeLogin()" class="w-full text-gray-500 text-[10px] uppercase font-bold mt-2">Annuler</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         const API_KEY = "AIzaSyCmnaLlRMNcoVf0tJAo1c1KAiEA_mSgLk4";
@@ -197,72 +205,52 @@
             document.getElementById('btn-' + id).classList.add('active');
         }
 
-        // --- CONSEILS ALGO AMÉLIORÉS ---
+        // --- CONSEILS ALGO ---
         function calcAdvice() {
             const d = t2s(document.getElementById('adv-dur').value);
             const w = t2s(document.getElementById('adv-wt').value);
             const ctr = parseFloat(document.getElementById('adv-ctr').value);
-            if(!d || !w || isNaN(ctr)) return alert("Veuillez tout remplir !");
-
-            const retention = ((w/d)*100).toFixed(1);
-            const res = document.getElementById('adv-res');
-            res.classList.remove('hidden');
-            document.getElementById('adv-stats').innerHTML = `${retention}% RÉTENTION | ${ctr}% CTR`;
-
-            let feedback = "";
-            if (retention < 38) feedback += "⚠️ <b>INTRO À CHIER :</b> Ton audience fuit dès le début. Travaille ton hook, sois plus dynamique ou change ton montage. <br><br>";
-            else feedback += "✅ <b>BONNE INTRO :</b> Tu captes bien les gens. <br><br>";
-
-            if (ctr < 4.5) feedback += "❌ <b>MINIATURE ÉCLATÉE :</b> Personne ne clique. C'est le point noir de ta vidéo. Ton titre ou ton image sont invisibles. <br><br>";
-            else if (ctr > 8.5 && retention < 30) feedback += "⚠️ <b>PUTACLIC DÉTECTÉ :</b> Les gens cliquent mais repartent direct. Tu as menti sur la promesse de la vidéo ! <br><br>";
-            else feedback += "✅ <b>PACK VISUEL SOLIDE :</b> Ta miniature fait son job. <br><br>";
-
-            if (retention > 40 && ctr < 4) feedback += "💡 <b>CONSEIL DE PRO :</b> Ta vidéo est EXCELLENTE mais personne ne la voit. Change ta miniature immédiatement pour exploser !";
-            else if (retention > 42 && ctr > 7.5) feedback += "🚀 <b>BANGER INTERSIDÉRAL :</b> Si tu gardes ces stats, l'algo va te propulser.";
-            else feedback += "🛠️ <b>AMÉLIORATION :</b> Travaille le rythme au milieu pour éviter les chutes de rétention.";
-
-            document.getElementById('adv-tips').innerHTML = feedback;
+            if(!d || !w || isNaN(ctr)) return alert("Remplis tout !");
+            const ret = ((w/d)*100).toFixed(1);
+            document.getElementById('adv-res').classList.remove('hidden');
+            document.getElementById('adv-stats').innerHTML = `${ret}% RÉTENTION | ${ctr}% CTR`;
+            let f = "";
+            if (ret < 38) f += "❌ <b>INTRO NULLE :</b> Les gens fuient. <br>";
+            else f += "✅ <b>BONNE INTRO :</b> Tu captes bien les gens. <br>";
+            if (ctr < 4.5) f += "❌ <b>MINIATURE ÉCLATÉE :</b> Change ton visuel immédiatement. <br>";
+            else f += "✅ <b>BON TAUX DE CLIC :</b> Ta miniature fait son job. <br>";
+            if (ret > 40 && ctr < 4) f += "💡 <b>CONSEIL DE PRO :</b> Vidéo EXCELLENTE mais mini invisible. CHANGE-LA !";
+            document.getElementById('adv-tips').innerHTML = f;
         }
 
-        // --- PERFORMANCE VIDÉO (AVEC LOGIQUE NUL) ---
+        // --- ANALYSE VIDÉO ---
         async function runAnalysis() {
             const url = document.getElementById('videoUrl').value;
             const id = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1];
-            if(!id) return alert("Lien invalide !");
-
+            if(!id) return alert("Lien invalide");
             const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${id}&key=${API_KEY}`);
             const data = await res.json();
             const v = data.items[0];
             const cid = v.snippet.channelId;
-
             const cRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${cid}&key=${API_KEY}`);
             const cData = await cRes.json();
-            const avgViews = Math.round(cData.items[0].statistics.viewCount / cData.items[0].statistics.videoCount);
-
+            const avg = Math.round(cData.items[0].statistics.viewCount / cData.items[0].statistics.videoCount);
             document.getElementById('dash-ana').classList.remove('hidden');
             document.getElementById('ana-thumb').src = v.snippet.thumbnails.high.url;
             document.getElementById('ana-title').innerText = v.snippet.title;
             const views = parseInt(v.statistics.viewCount);
             document.getElementById('ana-v').innerText = views.toLocaleString();
-            document.getElementById('ana-av').innerText = avgViews.toLocaleString();
+            document.getElementById('ana-av').innerText = avg.toLocaleString();
             document.getElementById('ana-l').innerText = parseInt(v.statistics.likeCount || 0).toLocaleString();
             document.getElementById('ana-c').innerText = parseInt(v.statistics.commentCount || 0).toLocaleString();
-            
-            const ratio = views / avgViews;
-            const verdictBox = document.getElementById('ana-verdict');
-            if (ratio > 1.4) {
-                verdictBox.innerText = "🚀 BANGER";
-                verdictBox.style.borderColor = "#00ff00"; verdictBox.style.color = "#00ff00";
-            } else if (ratio < 0.6) {
-                verdictBox.innerText = "❌ NUL";
-                verdictBox.style.borderColor = "#ff0000"; verdictBox.style.color = "#ff0000";
-            } else {
-                verdictBox.innerText = "⚖️ NORMAL";
-                verdictBox.style.borderColor = "#fff"; verdictBox.style.color = "#fff";
-            }
+            const ratio = views / avg;
+            const vb = document.getElementById('ana-verdict');
+            if (ratio > 1.4) { vb.innerText = "🚀 BANGER"; vb.style.borderColor = "#00ff00"; vb.style.color = "#00ff00"; }
+            else if (ratio < 0.6) { vb.innerText = "❌ NUL À CHIER"; vb.style.borderColor = "#ff0000"; vb.style.color = "#ff0000"; }
+            else { vb.innerText = "⚖️ MOYEN"; vb.style.borderColor = "#fff"; vb.style.color = "#fff"; }
         }
 
-        // --- SCANNER CHAINE (BORDURES OK) ---
+        // --- SCANNER CHAINE ---
         async function runChannel() {
             const q = document.getElementById('chanInput').value;
             const sRes = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${q}&key=${API_KEY}`);
@@ -277,39 +265,71 @@
             document.getElementById('chan-s').innerText = parseInt(cData.items[0].statistics.subscriberCount).toLocaleString();
             const vSearch = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${cid}&maxResults=12&order=date&type=video&key=${API_KEY}`);
             const vData = await vSearch.json();
-            const videoIds = vData.items.map(v => v.id.videoId).join(',');
-            const vStats = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds}&key=${API_KEY}`);
-            const vStatsData = await vStats.json();
-            const grid = document.getElementById('chan-videos-grid');
-            grid.innerHTML = "";
-            vStatsData.items.forEach(v => {
-                const vViews = parseInt(v.statistics.viewCount);
-                let border = "border-yellow-500";
-                if(vViews > avg * 1.3) border = "border-green-500";
-                if(vViews < avg * 0.7) border = "border-red-500";
-                grid.innerHTML += `<div class="glass p-3 border-b-4 ${border} text-white"><img src="${v.snippet.thumbnails.medium.url}" class="rounded-lg mb-2"><p class="text-[10px] font-bold yt-card-title">${v.snippet.title}</p></div>`;
+            const grid = document.getElementById('chan-videos-grid'); grid.innerHTML = "";
+            const ids = vData.items.map(v => v.id.videoId).join(',');
+            const vStats = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${ids}&key=${API_KEY}`);
+            const vDataS = await vStats.json();
+            vDataS.items.forEach(v => {
+                const vv = parseInt(v.statistics.viewCount);
+                let b = vv > avg * 1.3 ? "border-green-500" : (vv < avg * 0.7 ? "border-red-500" : "border-yellow-500");
+                grid.innerHTML += `<div class="glass p-3 border-b-4 ${b} text-white"><img src="${v.snippet.thumbnails.medium.url}" class="rounded-lg mb-2"><p class="text-[10px] font-bold">${v.snippet.title}</p></div>`;
             });
+        }
+
+        // --- MOCKUP MINI ---
+        function updateT() { document.getElementById('t-txt').innerText = document.getElementById('t-title').value; }
+        document.getElementById('t-file').onchange = e => { const r = new FileReader(); r.onload = x => document.getElementById('t-img').src = x.target.result; r.readAsDataURL(e.target.files[0]); };
+        async function loadFlux() {
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=FR&maxResults=50&key=${API_KEY}`);
+            const d = await r.json(), grid = document.getElementById('t-grid'), my = document.getElementById('t-my');
+            grid.innerHTML = ""; grid.appendChild(my);
+            d.items.forEach(i => { grid.innerHTML += `<div class="flex flex-col gap-2"><img src="${i.snippet.thumbnails.high.url}" class="rounded-xl aspect-video object-cover w-full"><h3 class="text-xs font-bold text-white">${i.snippet.title}</h3></div>`; });
+        }
+        function toggleImmersion() { document.getElementById('t-grid').classList.toggle('fullscreen-mockup'); }
+
+        // --- TWITCH ---
+        const twCanvas = document.getElementById('tw-canvas'), twCtx = twCanvas.getContext('2d');
+        let twMessages = [];
+        const twCols = ['#ff4500', '#1e90ff', '#32cd32', '#ff69b4', '#daa520', '#ff0000'];
+        function drawTwitch() {
+            const bg = document.getElementById('tw-bg').value;
+            twCtx.fillStyle = (bg === 'green') ? "#00ff00" : "#18181b";
+            twCtx.fillRect(0, 0, twCanvas.width, twCanvas.height);
+            let y = twCanvas.height - 30;
+            twMessages.slice(-20).reverse().forEach(m => {
+                twCtx.font = "bold 32px Arial"; twCtx.fillStyle = m.c; twCtx.fillText(m.u + ":", 25, y);
+                const w = twCtx.measureText(m.u + ": ").width;
+                twCtx.font = "32px Arial"; twCtx.fillStyle = (bg === 'green' ? "#000" : "#efeff1"); twCtx.fillText(m.t, 25+w, y);
+                y -= 52;
+            });
+        }
+        async function generateTwitchVideo() {
+            const dur = parseInt(document.getElementById('tw-duration').value)*1000, inter = parseFloat(document.getElementById('tw-interval').value)*1000;
+            const us = document.getElementById('tw-users').value.split(','), ms = document.getElementById('tw-msgs').value.split(',');
+            twMessages = []; document.getElementById('tw-btn').disabled = true; document.getElementById('tw-rec').style.display="block";
+            const stream = twCanvas.captureStream(60), rec = new MediaRecorder(stream, {mimeType:'video/webm; codecs=vp9', videoBitsPerSecond:8000000});
+            const chunks = []; rec.ondataavailable = e => chunks.push(e.data);
+            rec.onstop = () => { const b = new Blob(chunks,{type:'video/webm'}); const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href=u; a.download='twitch.webm'; a.click(); document.getElementById('tw-btn').disabled=false; document.getElementById('tw-rec').style.display="none"; };
+            rec.start(); const start = Date.now(); let last = -inter;
+            function loop() {
+                const n = Date.now(); if(n-start >= dur) { rec.stop(); return; }
+                if(n-last >= inter) { twMessages.push({u:us[Math.floor(Math.random()*us.length)].trim(), t:ms[Math.floor(Math.random()*ms.length)].trim(), c:twCols[Math.floor(Math.random()*twCols.length)]}); last=n; }
+                drawTwitch(); requestAnimationFrame(loop);
+            }
+            loop();
         }
 
         // --- UTILS ---
         function t2s(t) { if(!t.includes(':')) return Number(t); const p = t.split(':'); return (parseInt(p[0]) * 60) + parseInt(p[1]); }
-        function upC() { document.getElementById('cp-user').innerText = document.getElementById('c-user').value || "@pseudo"; document.getElementById('cp-txt').innerText = document.getElementById('c-txt').value || "Ton message..."; document.getElementById('cp-likes').innerText = document.getElementById('c-likes').value || "0"; }
+        function upC() { 
+            document.getElementById('cp-user').innerText = document.getElementById('c-user').value || "@pseudo"; 
+            document.getElementById('cp-txt').innerText = document.getElementById('c-txt').value || "Ton message..."; 
+            document.getElementById('cp-likes').innerText = document.getElementById('c-likes').value || "0"; 
+        }
         document.getElementById('c-pdp-in').onchange = e => { const r = new FileReader(); r.onload = x => document.getElementById('cp-pdp').src = x.target.result; r.readAsDataURL(e.target.files[0]); };
         function exportC() { html2canvas(document.getElementById('comment-capture'), { backgroundColor: null, scale: 3 }).then(c => { const a = document.createElement('a'); a.download = 'comment.png'; a.href = c.toDataURL(); a.click(); }); }
-        function updateT() { document.getElementById('t-txt').innerText = document.getElementById('t-title').value; }
-        document.getElementById('t-file').onchange = e => { const r = new FileReader(); r.onload = x => document.getElementById('t-img').src = x.target.result; r.readAsDataURL(e.target.files[0]); };
-        async function loadFlux() {
-            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=FR&maxResults=8&key=${API_KEY}`);
-            const d = await r.json(), grid = document.getElementById('t-grid'), my = document.getElementById('t-my');
-            grid.innerHTML = ""; grid.appendChild(my);
-            d.items.forEach(i => { grid.innerHTML += `<div class="flex flex-col gap-2 opacity-50"><img src="${i.snippet.thumbnails.high.url}" class="rounded-xl aspect-video object-cover"><h3 class="text-xs font-bold text-white">${i.snippet.title}</h3></div>`; });
-        }
-        function openLogin() { document.getElementById('login-modal').classList.remove('hidden'); }
-        function closeLogin() { document.getElementById('login-modal').classList.add('hidden'); }
-        function checkAuth() { if(document.getElementById('in-user').value === "Fangames" && document.getElementById('in-pass').value === "NickUta123") { document.body.classList.add('is-admin'); closeLogin(); alert("Session Staff OK"); } }
-        function logout() { document.body.classList.remove('is-admin'); }
-        function tiScore() { const v = document.getElementById('ti-in').value; document.getElementById('ti-count').innerText = v.trim().split(/\s+/).length; document.getElementById('ti-val').innerText = v.length > 40 ? "95%" : "40%"; }
-        async function getTags() { const id = document.getElementById('seo-u').value.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1]; const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${API_KEY}`); const d = await r.json(); const tags = d.items[0].snippet.tags || []; document.getElementById('seo-results').classList.remove('hidden'); document.getElementById('tags-box').innerHTML = tags.map(t => `<span class="tag-badge">${t}</span>`).join(''); }
+        
+        drawTwitch();
     </script>
 </body>
 </html>
